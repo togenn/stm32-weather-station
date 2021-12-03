@@ -1,0 +1,5 @@
+delay_lib.c:4:13:_delay	24	static
+delay_lib.c:15:6:delay	16	static
+delay_lib.c:19:6:delay_micros	16	static
+delay_lib.c:23:6:delay_IR	16	static
+delay_lib.c:27:6:delay_micros_IR	16	static

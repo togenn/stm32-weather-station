@@ -1,0 +1,3 @@
+EXTI_lib.c:9:13:calculate_SYSCFG_values	24	static
+EXTI_lib.c:19:6:enable_EXTI	24	static
+EXTI_lib.c:46:6:disable_EXTI	24	static
