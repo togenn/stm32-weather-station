@@ -1,4 +1,4 @@
-Core/Src/lcd.o: ../Core/Src/lcd.c ../Core/Inc/delay_lib.h \
+Core/Src/lcd.o: ../Core/Src/lcd.c ../Core/Inc/systick_IR_timer_lib.h \
  ../Core/Inc/lcd.h ../Core/Inc/GPIO_Lib.h \
  ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h \
  ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f401xe.h \
@@ -9,7 +9,7 @@ Core/Src/lcd.o: ../Core/Src/lcd.c ../Core/Inc/delay_lib.h \
  ../Drivers/CMSIS/Include/mpu_armv7.h \
  ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h
 
-../Core/Inc/delay_lib.h:
+../Core/Inc/systick_IR_timer_lib.h:
 
 ../Core/Inc/lcd.h:
 

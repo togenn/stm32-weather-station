@@ -1,7 +1,7 @@
 #ifndef __WEATHER_SENSOR_H
 #define __WEATHER_SENSOR_H
 
-#include "delay_lib.h"
+#include <systick_IR_timer_lib.h>
 #include "GPIO_Lib.h"
 
 struct sensor_data {

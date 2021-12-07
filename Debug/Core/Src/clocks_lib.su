@@ -1,0 +1,15 @@
+clocks_lib.c:11:13:select_clk_source	16	static
+clocks_lib.c:15:17:get_AHB_prescaler	16	static
+clocks_lib.c:53:9:get_APB1_prescaler	16	static
+clocks_lib.c:79:9:get_APB2_prescaler	16	static
+clocks_lib.c:105:16:get_PLLM	4	static
+clocks_lib.c:110:17:get_PLLN	4	static
+clocks_lib.c:115:16:get_PLLP	16	static
+clocks_lib.c:136:17:calculate_PLL_clk	16	static
+clocks_lib.c:143:6:init_SYSCLK_HSE	8	static
+clocks_lib.c:151:6:init_SYSCLK_PLL	32	static
+clocks_lib.c:196:6:init_peripheral_prescalers	16	static
+clocks_lib.c:203:10:get_SYSCLK	24	static
+clocks_lib.c:230:10:get_AHB_clock	16	static
+clocks_lib.c:235:10:get_APB1_clock	16	static
+clocks_lib.c:240:10:get_APB2_clock	16	static

@@ -1,6 +1,6 @@
-#include <delay_lib.h>
 #include "dht22.h"
 #include <stdio.h>
+#include <systick_IR_timer_lib.h>
 
 uint16_t temperature_temp;
 uint16_t humidity_temp;
@@ -41,7 +41,7 @@ static void read_bit(void) {
 
 		dht_status = COOLDOWN;
 		application_callback();
-		delay_IR(1000);
+		IR_timer_millis(150);
 
 
 
@@ -61,7 +61,7 @@ static void read_bit(void) {
 }
 
 void handle_data_pin_IT() {
-	delay_micros_IR(35);
+	IR_timer_micros(35);
 
 }
 
@@ -72,13 +72,13 @@ void handle_delay_IT(void) {
 		dht_status = INITIALIZING_2;
 
 		write_pin(&dht22, HIGH);
-		delay_micros_IR(20);
+		IR_timer_micros(20);
 
 	} else if (dht_status == INITIALIZING_2) {
 
 		dht_status = SENDING_DATA_INIT;
 		set_input(&dht22, INPUT_PU);
-		delay_micros_IR(160);
+		IR_timer_micros(160);
 
 	} else if (dht_status == SENDING_DATA_INIT) {
 
@@ -111,7 +111,7 @@ uint8_t get_data(pin_type *pin) {
 
 		set_output(pin, OUTPUT_PP);
 		write_pin(pin, LOW);
-		delay_micros_IR(1200);
+		IR_timer_micros(1200);
 
 	}
 

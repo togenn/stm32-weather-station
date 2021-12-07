@@ -1,0 +1,3 @@
+UART_lib.c:10:13:enable_uart_clock	16	static
+UART_lib.c:22:13:set_BRR	32	static
+UART_lib.c:35:6:init_uart	24	static

@@ -1,5 +1,5 @@
 Core/Src/weather_sensor.o: ../Core/Src/weather_sensor.c \
- ../Core/Inc/weather_sensor.h ../Core/Inc/delay_lib.h \
+ ../Core/Inc/weather_sensor.h ../Core/Inc/systick_IR_timer_lib.h \
  ../Core/Inc/GPIO_Lib.h \
  ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h \
  ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f401xe.h \
@@ -12,7 +12,7 @@ Core/Src/weather_sensor.o: ../Core/Src/weather_sensor.c \
 
 ../Core/Inc/weather_sensor.h:
 
-../Core/Inc/delay_lib.h:
+../Core/Inc/systick_IR_timer_lib.h:
 
 ../Core/Inc/GPIO_Lib.h:
 

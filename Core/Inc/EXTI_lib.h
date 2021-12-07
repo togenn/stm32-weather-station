@@ -22,7 +22,6 @@
 #define EXTI_REFE 2 // rising and falling edge
 
 
-//SYSCFG clock must be enabled
 
 //gpio: EXTI_GPIOx
 void enable_EXTI(uint8_t pin_num, uint8_t gpio, uint8_t edge);

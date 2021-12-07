@@ -18,6 +18,7 @@ static void calculate_SYSCFG_values(uint8_t pin_num, uint8_t *buf) {
 
 void enable_EXTI(uint8_t pin_num, uint8_t gpio, uint8_t edge) {
 
+	RCC->APB2ENR |= 1u << 14;
 	//enable correct port from SYSCFG register for EXTI
 	uint8_t SYSCFG_values[2];
 	calculate_SYSCFG_values(pin_num, SYSCFG_values);
@@ -53,6 +54,8 @@ void disable_EXTI(uint8_t pin_num) {
 	EXTI->RTSR &= ~(1u << pin_num);
 
 	EXTI->IMR &= ~(1u << pin_num);
+
+	RCC->APB2ENR &= ~(1u << 14);
 
 }
 

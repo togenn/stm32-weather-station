@@ -5,6 +5,7 @@
  *      Author: toni
  */
 #include "UART_lib.h"
+#include "clocks_lib.h"
 
 static void enable_uart_clock(USART_TypeDef* uart) {
 
@@ -18,9 +19,16 @@ static void enable_uart_clock(USART_TypeDef* uart) {
 
 }
 
-static void set_BRR(uint32_t baudrate) {
+static void set_BRR(uint32_t baudrate, USART_TypeDef* uart) {
+	uint32_t clk_speed;
+	if (uart == USART2) {
+		clk_speed = get_APB1_clock();
+	} else {
+		clk_speed = get_APB2_clock();
+	}
 
-
+	uint16_t mantissa = clk_speed / (16 * baudrate);
+	float fraction = clk_speed / (16 * baudrate);
 }
 
 
@@ -37,10 +45,10 @@ void init_uart(USART_TypeDef* uart, uint8_t word_length, uint8_t stop_bits, uint
 	uart->CR2 |= stop_bits << 12;
 
 	//Select the desired baud rate using the baud rate register USART_BRR
-	set_BRR(baudrate);
+	set_BRR(baudrate, uart);
 
-	6. Set the RE bit USART_CR1. This enables the receiver which begins searching for a
-	start bit.
+	//6. Set the RE bit USART_CR1. This enables the receiver which begins searching for a
+	//start bit.
 
 }
 
