@@ -1,36 +1,20 @@
 #include "dht22.h"
-#include <stdio.h>
 #include <systick_IR_timer_lib.h>
+#include "EXTI_lib.h"
+#include "NVIC_lib.h"
+
 
 uint16_t temperature_temp;
 uint16_t humidity_temp;
 
-static void enable_data_pin_IT(void) {
-	EXTI->FTSR |= 1u << 10;
-	EXTI->IMR |= 1u << 10;
-
-	uint8_t ISER_num = EXTI15_10_IRQn / 32;
-	uint8_t ISER_pos = EXTI15_10_IRQn % 32;
-
-	NVIC->ISER[ISER_num] |= 1u << ISER_pos;
-}
-
-static void disable_data_pin_IT(void) {
-	EXTI->FTSR &= ~(1u << 10);
-	EXTI->IMR &= ~(1u << 10);
-
-	uint8_t ISER_num = EXTI15_10_IRQn / 32;
-	uint8_t ISER_pos = EXTI15_10_IRQn % 32;
-
-	NVIC->ISER[ISER_num] &= ~(1u << ISER_pos);
-}
+int bits_read;
 
 static void read_bit(void) {
 	pin_state value = read_pin(&dht22);
 
 	if (bits_read == 32) {
 
-		disable_data_pin_IT();
+		disable_EXTI(10);
 
 		dht22_data.temperature = temperature_temp;
 		dht22_data.humidity = humidity_temp;
@@ -39,11 +23,8 @@ static void read_bit(void) {
 		humidity_temp = 0;
 		bits_read = -1;
 
-		dht_status = COOLDOWN;
-		application_callback();
-		IR_timer_millis(150);
-
-
+		dht_status = SLEEPING;
+		dht22_application_callback();
 
 	} else if (bits_read < 16) {
 
@@ -57,39 +38,30 @@ static void read_bit(void) {
 
 	bits_read++;
 
-
 }
 
-void handle_data_pin_IT() {
+void dht22_handle_data_pin_IT() {
 	IR_timer_micros(35);
 
 }
 
-void handle_delay_IT(void) {
 
-	if (dht_status == INITIALIZING_1) {
+void dht22_handle_delay_IT(void) {
+
+	if (dht_status == INITIALIZING) {
 
 		dht_status = INITIALIZING_2;
 
-		write_pin(&dht22, HIGH);
-		IR_timer_micros(20);
+		set_input(&dht22, INPUT_PU);
+
+		IR_timer_micros(185);
+
 
 	} else if (dht_status == INITIALIZING_2) {
-
-		dht_status = SENDING_DATA_INIT;
-		set_input(&dht22, INPUT_PU);
-		IR_timer_micros(160);
-
-	} else if (dht_status == SENDING_DATA_INIT) {
-
 		dht_status = SENDING_DATA;
 
 		//enable interrupt for data pin on rising edge
-		enable_data_pin_IT();
-
-	} else if (dht_status == COOLDOWN) {
-
-		dht_status = SLEEPING;
+		enable_EXTI(10, EXTI_GPIOA, EXTI_RE);
 
 	} else if (dht_status == SENDING_DATA) {
 		read_bit();
@@ -102,20 +74,26 @@ void init_dht22() {
 	dht_status = SLEEPING;
 
 	init_pin(&dht22, GPIOA, 10, INPUT_PU);
+	enable_IR(EXTI15_10_IRQn);
 
 }
 
-uint8_t get_data(pin_type *pin) {
+uint8_t dht22_get_data() {
 	if (dht_status == SLEEPING) {
-		dht_status = INITIALIZING_1;
+		dht_status = INITIALIZING;
 
-		set_output(pin, OUTPUT_PP);
-		write_pin(pin, LOW);
-		IR_timer_micros(1200);
+		set_output(&dht22, OUTPUT_PP);
+		write_pin(&dht22, LOW);
+		IR_timer_micros(1000);
 
 	}
 
 	return dht_status;
 
+}
+
+void dht22_get_data_and_wait() {
+	dht22_get_data();
+	while(dht_status != SLEEPING);
 }
 

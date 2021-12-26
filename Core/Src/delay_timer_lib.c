@@ -5,6 +5,7 @@
  *      Author: toni
  */
 #include "delay_timer_lib.h"
+#include "clocks_lib.h"
 
 static void enable_timer_clock(TIM_TypeDef *timer) {
 	if (timer == TIM1) {
@@ -35,7 +36,7 @@ static uint32_t get_timer_base_clock(TIM_TypeDef *timer) {
 		prescaler = get_APB1_prescaler();
 	} else {
 		clk_speed = get_APB2_clock();
-		prescaler = get_APB1_prescaler();
+		prescaler = get_APB2_prescaler();
 	}
 
 	if (prescaler != 1) {
@@ -53,12 +54,9 @@ static uint32_t get_timer_clock(TIM_TypeDef *timer) {
 }
 
 void init_timer(TIM_TypeDef *timer, uint16_t prescaler) {
-	//disable events
-	timer->CR1 |= 2u;
-
+	enable_timer_clock(timer);
 	timer->PSC = prescaler - 1;
 
-	enable_timer_clock(timer);
 }
 
 uint8_t delay(uint32_t ms, TIM_TypeDef *timer) {
@@ -70,12 +68,14 @@ uint8_t delay(uint32_t ms, TIM_TypeDef *timer) {
 		max = 65535;
 	}
 
-	uint8_t status = ms < (max / (get_timer_clock(timer) / 1000)) ? OK : OF_ERROR;
+	uint32_t timer_clock = get_timer_clock(timer);
+	uint8_t status = ms < (max / (timer_clock / 1000)) ? OK : OF_ERROR;
 
 	if (status == OK) {
-		timer->ARR = ms - 1;
+		timer->ARR = ms * (timer_clock / 1000) - 1;
 		timer->CR1 |= 1u;
-		while (timer->CNT != ms - 1);
+		while (!(timer->SR & 1u));
+		timer->SR &= ~1u;
 	}
 
 

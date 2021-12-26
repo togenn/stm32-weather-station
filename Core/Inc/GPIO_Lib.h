@@ -4,18 +4,12 @@
 #define STM32F401xx
 #include "stm32f4xx.h"                  // Device header
 
-#define input 0x0
-#define output 0x1
-#define alternate_function 0x2
-#define analog 0x3
-
 #define no_PUPD 0x0
 #define PU 0x1
 #define PD 0x2
 
 #define PP 0x0
 #define OD 0x1
-
 
 // pin modes
 #define INPUT_NO_PUPD 0
@@ -24,6 +18,8 @@
 
 #define OUTPUT_PP 3
 #define OUTPUT_OD 4
+
+#define alternate_function 5
 
 
 #define GPIOA_CLOCK_EN 0x1u

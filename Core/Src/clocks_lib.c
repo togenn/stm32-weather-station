@@ -50,9 +50,120 @@ static uint16_t get_AHB_prescaler() {
 	return AHB_prescaler;
 }
 
+
+
+static uint8_t get_PLLM() {
+
+	return RCC->PLLCFGR & 63u;
+}
+
+static uint16_t get_PLLN() {
+
+	return (RCC->PLLCFGR & (511u << 6)) >> 6;
+}
+
+static uint8_t get_PLLP() {
+	uint8_t PLLP;
+
+	switch ((RCC->PLLCFGR & (3u << 16)) >> 16) {
+	case PLLP_2:
+		PLLP = 2;
+		break;
+	case PLLP_4:
+		PLLP = 4;
+		break;
+	case PLLP_6:
+		PLLP = 6;
+		break;
+	case PLLP_8:
+		PLLP = 8;
+		break;
+	}
+
+	return PLLP;
+}
+
+static uint32_t get_clk_value(uint8_t clk_source) {
+	uint32_t clk_value;
+	if (clk_source == HSI) {
+		clk_value = 16000000;
+	} else if (clk_source == HSE) {
+		clk_value = 8000000;
+	}
+
+	return clk_value;
+}
+
+static uint32_t calculate_PLL_clk(uint32_t clk_value, uint8_t PLLM,
+		uint16_t PLLN, uint8_t PLLP) {
+
+	return clk_value / PLLM * PLLN / PLLP;
+}
+
+
+void init_SYSCLK_HSE() {
+	//HSE 8MHz
+	//enable HSE
+	RCC->CR |= 1u << 16;
+	RCC->CR |= 1u << 18;
+	select_clk_source(HSE);
+}
+
+void init_SYSCLK_PLL(uint8_t clk_source, uint8_t PLLM, uint16_t PLLN,
+		uint8_t PLLP) {
+	RCC->PLLCFGR = 0;
+
+	RCC->PLLCFGR |= PLLM;
+	RCC->PLLCFGR |= PLLN << 6;
+	RCC->PLLCFGR |= PLLP << 16;
+
+	uint32_t clock_value = calculate_PLL_clk(get_clk_value(clk_source), PLLM, PLLN,
+			get_PLLP(PLLP));
+
+
+	if (clock_value > 60000000) {
+		RCC->APB1ENR |= 1u << 28;
+		PWR->CR |= PWR_VOS_SCALE_2 << 14;
+		FLASH->ACR |= 2u;
+	} else if (clock_value > 30000000) {
+		FLASH->ACR |= 2u;
+	}
+
+
+	switch (clk_source) {
+	case HSE:
+		RCC->CR |= 1u << 18;
+		RCC->CR |= 1u << 16;
+		RCC->PLLCFGR |= 1u << 22;
+		break;
+
+	case HSI:
+		RCC->CR |= 1u;
+		break;
+	}
+
+	RCC->CR |= 1u << 24;
+
+	select_clk_source(PLL);
+
+	if (clk_source == HSE) {
+		RCC->CR &= ~1u;
+	}
+
+
+
+}
+
+void init_peripheral_prescalers(uint8_t AHB_prescaler, uint8_t APB1_prescaler,
+		uint8_t APB2_prescaler) {
+	RCC->CFGR |= AHB_prescaler << 4;
+	RCC->CFGR |= APB1_prescaler << 10;
+	RCC->CFGR |= APB2_prescaler << 13;
+}
+
 uint8_t get_APB1_prescaler() {
-	uint8_t bits = (7u << 10) & RCC->CFGR;
-	uint16_t APB1_prescaler;
+	uint8_t bits = ((7u << 10) & RCC->CFGR) >> 10;
+	uint8_t APB1_prescaler;
 
 	if (!(bits & 4u)) {
 		return 1;
@@ -102,117 +213,14 @@ uint8_t get_APB2_prescaler() {
 	return APB2_prescaler;
 }
 
-static uint8_t get_PLLM() {
-
-	return RCC->PLLCFGR & 63u;
-}
-
-static uint16_t get_PLLN() {
-
-	return RCC->PLLCFGR & (511u << 6);
-}
-
-static uint8_t get_PLLP() {
-	uint8_t PLLP;
-
-	switch (RCC->PLLCFGR & (3u << 16)) {
-	case PLLP_2:
-		PLLP = 2;
-		break;
-	case PLLP_4:
-		PLLP = 4;
-		break;
-	case PLLP_6:
-		PLLP = 6;
-		break;
-	case PLLP_8:
-		PLLP = 8;
-		break;
-	}
-
-	return PLLP;
-}
-
-static uint32_t calculate_PLL_clk(uint32_t source_clk, uint8_t PLLM,
-		uint16_t PLLN, uint8_t PLLP) {
-
-	return source_clk / PLLM * PLLN / PLLP;
-}
-
-
-void init_SYSCLK_HSE() {
-	//HSE 8MHz
-	//enable HSE
-	RCC->CR |= 1u << 16;
-	RCC->CR |= 1u << 18;
-	select_clk_source(HSE);
-}
-
-void init_SYSCLK_PLL(uint8_t clk_source, uint8_t PLLM, uint16_t PLLN,
-		uint8_t PLLP) {
-	RCC->PLLCFGR = 0;
-
-	RCC->PLLCFGR |= PLLM;
-	RCC->PLLCFGR |= PLLN << 6;
-	RCC->PLLCFGR |= PLLP << 16;
-
-	uint32_t clock_value = calculate_PLL_clk(clk_source, PLLM, PLLN,
-			get_PLLP(PLLP));
-	printf("%d\n", (int) clock_value);
-
-	if (clock_value > 60000000) {
-		RCC->APB1ENR |= 1u << 28;
-		PWR->CR |= PWR_VOS_SCALE_2 << 14;
-		FLASH->ACR |= 2u;
-	} else if (clock_value > 30000000) {
-		FLASH->ACR |= 2u;
-	}
-
-
-	switch (clk_source) {
-	case HSE:
-		RCC->CR |= 1u << 18;
-		RCC->CR |= 1u << 16;
-		RCC->PLLCFGR |= 1u << 22;
-		break;
-
-	case HSI:
-		RCC->CR |= 1u;
-		break;
-	}
-
-	RCC->CR |= 1u << 24;
-
-	select_clk_source(PLL);
-
-	if (clk_source == HSE) {
-		RCC->CR &= ~1u;
-	}
-
-
-
-}
-
-void init_peripheral_prescalers(uint8_t AHB_prescaler, uint8_t APB1_prescaler,
-		uint8_t APB2_prescaler) {
-	RCC->CFGR |= AHB_prescaler << 4;
-	RCC->CFGR |= APB1_prescaler << 10;
-	RCC->CFGR |= APB2_prescaler << 13;
-}
-
 uint32_t get_SYSCLK() {
 
 	uint8_t clk_source = 3u & RCC->CFGR;
 	uint32_t clk_speed;
 
-	switch (clk_source) {
-	case HSI:
-		clk_speed = 16000000;
-		break;
-	case HSE:
-		clk_speed = 8000000;
-		break;
-	case PLL:
+	if (clk_source == HSI || clk_source == HSE) {
+		clk_speed = get_clk_value(clk_source);
+	} else {
 
 		if ((1u << 22) & RCC->PLLCFGR) {
 			clk_speed = 8000000;

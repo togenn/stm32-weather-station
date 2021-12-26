@@ -37,8 +37,10 @@ void init_pin(pin_type *pin, GPIO_TypeDef *_gpio, uint8_t _pin_num,
 
 	if (_mode < 3) {
 		set_input(pin, _mode);
-	} else {
+	} else if (_mode != alternate_function) {
 		set_output(pin, _mode);
+	} else {
+		pin->gpio->MODER |= 2u << ((pin->pin_num * 2));
 	}
 
 }
@@ -67,7 +69,7 @@ void set_input(pin_type *pin, uint8_t mode) {
 
 void set_output(pin_type *pin, uint8_t mode) {
 	pin->gpio->MODER &= ~(3u << ((pin->pin_num * 2)));
-	pin->gpio->MODER |= output << ((pin->pin_num * 2));
+	pin->gpio->MODER |= 1u << ((pin->pin_num * 2));
 
 	switch (mode) {
 	case OUTPUT_PP:
@@ -105,5 +107,5 @@ pin_state read_pin(pin_type *pin) {
 pin_state toggle_pin(pin_type *pin) {
 	pin->gpio->ODR ^= (1u << pin->pin_num);
 
-	return read_pin(pin);
+	return 0;
 }

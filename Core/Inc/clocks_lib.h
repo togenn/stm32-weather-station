@@ -10,8 +10,8 @@
 
 #include <stdint.h>
 
-#define HSE 0u
-#define HSI 1u
+#define HSI 0u
+#define HSE 1u
 #define PLL 2u
 
 #define PLLP_2 0u

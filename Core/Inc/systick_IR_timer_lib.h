@@ -18,10 +18,10 @@ void init_systick();
 
 
 //ms < 16,777,216 / (AHB1_clock / 1000)
-uint8_t IR_timer_millis(uint32_t ms);
+void IR_timer_millis(uint32_t ms);
 
 //micros < 16,777,216 / (AHB1_clock / 1000000)
-uint8_t IR_timer_micros(uint32_t micros);
+void IR_timer_micros(uint32_t micros);
 
 
 #endif

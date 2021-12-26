@@ -1,71 +1,66 @@
 #include "GPIO_Lib.h"
-#include "weather_sensor.h"
-#include "lcd.h"
 #include "dht22.h"
 #include <stdio.h>
 #include <systick_IR_timer_lib.h>
-#include "EXTI_lib.h"
-#include "NVIC_lib.h"
-#include "clocks_lib.h"
-
-
-extern void initialise_monitor_handles(void);
+#include "UART_lib.h"
+#include "delay_timer_lib.h"
 
 pin_type internal_led_pin;
-pin_type external_led;
-
-int count = 0;
+pin_type test_pin;
 
 void SysTick_Handler() {
 
 	SysTick->CTRL = 0;
-
-	//handle_delay_IT();
+	dht22_handle_delay_IT();
 
 }
 
 void EXTI15_10_IRQHandler() {
 
-	toggle_pin(&external_led);
-	//handle_data_pin_IT();
+	dht22_handle_data_pin_IT();
 	EXTI->PR |= 1u << 10;
 
 }
 
-void application_callback() {
+void dht22_application_callback() {
 	printf("%d\n", (int) dht22_data.temperature);
 	printf("%d\n", (int) dht22_data.humidity);
 
 }
 
-void enable_FPU() {
-	uint32_t* FPU_CPACR = 0xE000ED88;
 
-	*FPU_CPACR |= 15u << 20;
+void init_uart_pins() {
+	//pins PA2 and PA3
+	pin_type uartTX, uartRX;
+	init_pin(&uartTX, GPIOA, 2, alternate_function);
+	init_pin(&uartRX, GPIOA, 3, alternate_function);
+
+	GPIOA->AFR[0] |= 7u << 8;
+	GPIOA->AFR[0] |= 7u << 12;
 }
 
 
 int main(void) {
 
-	initialise_monitor_handles();
+	init_systick();
+	init_timer(TIM2, 1);
+	init_dht22();
 
-	printf("hello\n");
-
-	enable_FPU();
-
-	init_SYSCLK_PLL(HSE, 4u, 84u, PLLP_2);
-	init_peripheral_prescalers(AHB_PRESCALER_1, APBx_PRESCALER_2, APBx_PRESCALER_2);
-
-	//printf("%d\n", (int) get_AHB_clock());
-
-	init_pin(&internal_led_pin, GPIOA, 5, OUTPUT_PP);
+	init_pin(&test_pin, GPIOA, 0, OUTPUT_PP);
 
 
+	init_uart_pins();
+	init_uart(USART2, UART_8BIT, UART_1_STOP_BITS, 115200);
+	uint8_t data[] = "moro\n\r";
 
-	//delay_IR(100);
+
 
 	while (1) {
-		//get_data(&dht22);
+
+		uart_transmit_data(USART2, data, 6);
+		dht22_get_data();
+		//toggle_pin(&test_pin);
+		delay(2000, TIM2);
 
 	}
 
