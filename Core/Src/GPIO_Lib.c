@@ -45,6 +45,12 @@ void init_pin(pin_type *pin, GPIO_TypeDef *_gpio, uint8_t _pin_num,
 
 }
 
+void set_AF_num(pin_type* pin, uint8_t num) {
+	uint8_t reg_H_L = pin->pin_num < 8 ? 0 : 1;
+
+	pin->gpio->AFR[reg_H_L] |= (15u & num) << (pin->pin_num * 4);
+}
+
 void set_input(pin_type *pin, uint8_t mode) {
 	pin->gpio->MODER &= ~(3u << ((pin->pin_num * 2)));
 	pin->gpio->PUPDR &= ~(3u << ((pin->pin_num * 2)));

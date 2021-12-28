@@ -1,0 +1,4 @@
+interrupts.c:13:6:SysTick_Handler	8	static
+interrupts.c:20:6:EXTI15_10_IRQHandler	8	static
+interrupts.c:27:6:I2C1_EV_IRQHandler	8	static
+interrupts.c:31:6:I2C1_ER_IRQHandler	16	static

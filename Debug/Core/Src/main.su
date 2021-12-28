@@ -1,5 +1,4 @@
-main.c:19:6:SysTick_Handler	4	static
-main.c:27:6:EXTI15_10_IRQHandler	8	static
-main.c:35:6:application_callback	8	static
-main.c:41:6:enable_FPU	16	static
-main.c:48:5:main	8	static
+main.c:11:6:dht22_application_callback	8	static
+main.c:17:6:uart_pins_init	24	static
+main.c:27:6:I2C_pins_init	24	static
+main.c:36:5:main	16	static

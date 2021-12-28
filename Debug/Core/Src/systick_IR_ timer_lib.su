@@ -1,4 +1,4 @@
 systick_IR_ timer_lib.c:5:13:timer	16	static
-systick_IR_ timer_lib.c:15:6:init_systick	16	static
-systick_IR_ timer_lib.c:22:9:IR_timer_millis	24	static
-systick_IR_ timer_lib.c:34:9:IR_timer_micros	24	static
+systick_IR_ timer_lib.c:16:6:init_systick	16	static
+systick_IR_ timer_lib.c:23:6:IR_timer_millis	16	static
+systick_IR_ timer_lib.c:29:6:IR_timer_micros	16	static

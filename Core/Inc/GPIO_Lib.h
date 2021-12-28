@@ -44,6 +44,7 @@ typedef struct {
 void init_pin(pin_type* pin, GPIO_TypeDef* _gpio, uint8_t pin_num, uint8_t _mode);
 void set_input(pin_type* pin, uint8_t mode);
 void set_output(pin_type* pin, uint8_t mode);
+void set_AF_num(pin_type* pin, uint8_t num);
 pin_state write_pin(pin_type* pin, pin_state state);
 pin_state read_pin(pin_type* pin);
 pin_state toggle_pin(pin_type* pin);

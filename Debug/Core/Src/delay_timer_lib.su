@@ -1,5 +1,5 @@
-delay_timer_lib.c:9:13:enable_timer_clock	16	static
-delay_timer_lib.c:29:17:get_timer_base_clock	24	static
-delay_timer_lib.c:48:17:get_timer_clock	24	static
-delay_timer_lib.c:55:6:init_timer	16	static
-delay_timer_lib.c:64:9:delay	24	static
+delay_timer_lib.c:10:13:enable_timer_clock	16	static
+delay_timer_lib.c:30:17:get_timer_base_clock	24	static
+delay_timer_lib.c:49:17:get_timer_clock	24	static
+delay_timer_lib.c:56:6:init_timer	16	static
+delay_timer_lib.c:62:9:delay	32	static

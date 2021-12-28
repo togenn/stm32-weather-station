@@ -19,9 +19,9 @@
 #define UART_2_STOP_BITS 2u
 
 //User definable
-void init_uart_pins(void);
+void uart_pins_init(void);
 
-void init_uart(USART_TypeDef* uart, uint8_t word_length, uint8_t stop_bits, uint32_t);
+void uart_init(USART_TypeDef* uart, uint8_t word_length, uint8_t stop_bits, uint32_t);
 
 void uart_transmit_data(USART_TypeDef* uart, uint8_t* data_buffer, uint32_t len);
 

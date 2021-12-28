@@ -31,8 +31,10 @@ static void set_BRR(uint32_t baudrate, USART_TypeDef* uart) {
 }
 
 
-void init_uart(USART_TypeDef* uart, uint8_t word_length, uint8_t stop_bits, uint32_t baudrate) {
+void uart_init(USART_TypeDef* uart, uint8_t word_length, uint8_t stop_bits, uint32_t baudrate) {
 	enable_uart_clock(uart);
+
+	uart_pins_init();
 
 	//Enable the USART
 	uart->CR1 |= 1u << 13;

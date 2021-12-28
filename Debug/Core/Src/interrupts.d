@@ -1,6 +1,4 @@
-Core/Src/weather_sensor.o: ../Core/Src/weather_sensor.c \
- ../Core/Inc/weather_sensor.h ../Core/Inc/systick_IR_timer_lib.h \
- ../Core/Inc/GPIO_Lib.h \
+Core/Src/interrupts.o: ../Core/Src/interrupts.c \
  ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h \
  ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f401xe.h \
  ../Drivers/CMSIS/Include/core_cm4.h \
@@ -8,13 +6,9 @@ Core/Src/weather_sensor.o: ../Core/Src/weather_sensor.c \
  ../Drivers/CMSIS/Include/cmsis_compiler.h \
  ../Drivers/CMSIS/Include/cmsis_gcc.h \
  ../Drivers/CMSIS/Include/mpu_armv7.h \
- ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h
-
-../Core/Inc/weather_sensor.h:
-
-../Core/Inc/systick_IR_timer_lib.h:
-
-../Core/Inc/GPIO_Lib.h:
+ ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h \
+ ../Core/Inc/dht22.h ../Core/Inc/GPIO_Lib.h ../Core/Inc/main.h \
+ ../Core/Inc/I2C_lib.h ../Core/Inc/UART_lib.h
 
 ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h:
 
@@ -31,3 +25,13 @@ Core/Src/weather_sensor.o: ../Core/Src/weather_sensor.c \
 ../Drivers/CMSIS/Include/mpu_armv7.h:
 
 ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h:
+
+../Core/Inc/dht22.h:
+
+../Core/Inc/GPIO_Lib.h:
+
+../Core/Inc/main.h:
+
+../Core/Inc/I2C_lib.h:
+
+../Core/Inc/UART_lib.h:

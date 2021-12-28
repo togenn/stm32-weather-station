@@ -1,0 +1,8 @@
+I2c_lib.c:11:13:I2C_enable_clock	16	static
+I2c_lib.c:22:13:I2C_enable_IR	16	static
+I2c_lib.c:36:6:I2C_init	24	static
+I2c_lib.c:56:9:I2C_transmit_data	16	static
+I2c_lib.c:73:9:I2C_transmit_data_and_wait	16	static
+I2c_lib.c:88:13:handle_start_condition	24	static
+I2c_lib.c:101:6:I2C_handle_EV	16	static
+I2c_lib.c:131:9:I2C_handle_ER	24	static

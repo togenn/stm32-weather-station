@@ -1,7 +1,8 @@
 GPIO_Lib.c:3:13:enable_GPIOx_clock	16	static
 GPIO_Lib.c:31:6:init_pin	24	static
-GPIO_Lib.c:46:6:set_input	16	static
-GPIO_Lib.c:68:6:set_output	16	static
-GPIO_Lib.c:86:11:write_pin	16	static
-GPIO_Lib.c:96:11:read_pin	24	static
-GPIO_Lib.c:105:11:toggle_pin	16	static
+GPIO_Lib.c:48:6:set_AF_num	24	static
+GPIO_Lib.c:54:6:set_input	16	static
+GPIO_Lib.c:76:6:set_output	16	static
+GPIO_Lib.c:94:11:write_pin	16	static
+GPIO_Lib.c:104:11:read_pin	24	static
+GPIO_Lib.c:113:11:toggle_pin	16	static

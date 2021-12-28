@@ -1,26 +1,12 @@
-#include "GPIO_Lib.h"
+#include "UART_lib.h"
 #include "dht22.h"
 #include <stdio.h>
 #include <systick_IR_timer_lib.h>
-#include "UART_lib.h"
 #include "delay_timer_lib.h"
+#include "main.h"
+#include "string.h"
 
-pin_type internal_led_pin;
 pin_type test_pin;
-
-void SysTick_Handler() {
-
-	SysTick->CTRL = 0;
-	dht22_handle_delay_IT();
-
-}
-
-void EXTI15_10_IRQHandler() {
-
-	dht22_handle_data_pin_IT();
-	EXTI->PR |= 1u << 10;
-
-}
 
 void dht22_application_callback() {
 	printf("%d\n", (int) dht22_data.temperature);
@@ -28,17 +14,24 @@ void dht22_application_callback() {
 
 }
 
-
-void init_uart_pins() {
+void uart_pins_init() {
 	//pins PA2 and PA3
 	pin_type uartTX, uartRX;
 	init_pin(&uartTX, GPIOA, 2, alternate_function);
 	init_pin(&uartRX, GPIOA, 3, alternate_function);
 
-	GPIOA->AFR[0] |= 7u << 8;
-	GPIOA->AFR[0] |= 7u << 12;
+	set_AF_num(&uartTX, 7);
+	set_AF_num(&uartRX, 7);
 }
 
+void I2C_pins_init() {
+	pin_type SCL, SDA;
+	init_pin(&SCL, GPIOB, 6, alternate_function);
+	init_pin(&SDA, GPIOB, 7, alternate_function);
+
+	set_AF_num(&SCL, 4);
+	set_AF_num(&SDA, 4);
+}
 
 int main(void) {
 
@@ -48,11 +41,14 @@ int main(void) {
 
 	init_pin(&test_pin, GPIOA, 0, OUTPUT_PP);
 
-
-	init_uart_pins();
-	init_uart(USART2, UART_8BIT, UART_1_STOP_BITS, 115200);
+	uart_init(USART2, UART_8BIT, UART_1_STOP_BITS, 115200);
 	uint8_t data[] = "moro\n\r";
 
+	memset(&I2C_handle, 0, sizeof(I2C_handle));
+	I2C_handle.addressing_mode = I2C_7_BIT_ADDRESSING;
+	I2C_handle.peripheral = I2C1;
+
+	I2C_init(&I2C_handle);
 
 
 	while (1) {
