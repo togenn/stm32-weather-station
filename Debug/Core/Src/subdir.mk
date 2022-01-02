@@ -9,6 +9,7 @@ C_SRCS += \
 ../Core/Src/GPIO_Lib.c \
 ../Core/Src/I2c_lib.c \
 ../Core/Src/NVIC_lib.c \
+../Core/Src/RTC.c \
 ../Core/Src/UART_lib.c \
 ../Core/Src/clocks_lib.c \
 ../Core/Src/delay_timer_lib.c \
@@ -25,6 +26,7 @@ OBJS += \
 ./Core/Src/GPIO_Lib.o \
 ./Core/Src/I2c_lib.o \
 ./Core/Src/NVIC_lib.o \
+./Core/Src/RTC.o \
 ./Core/Src/UART_lib.o \
 ./Core/Src/clocks_lib.o \
 ./Core/Src/delay_timer_lib.o \
@@ -41,6 +43,7 @@ C_DEPS += \
 ./Core/Src/GPIO_Lib.d \
 ./Core/Src/I2c_lib.d \
 ./Core/Src/NVIC_lib.d \
+./Core/Src/RTC.d \
 ./Core/Src/UART_lib.d \
 ./Core/Src/clocks_lib.d \
 ./Core/Src/delay_timer_lib.d \
@@ -62,7 +65,7 @@ Core/Src/systick_IR_\ timer_lib.o: ../Core/Src/systick_IR_\ timer_lib.c Core/Src
 clean: clean-Core-2f-Src
 
 clean-Core-2f-Src:
-	-$(RM) ./Core/Src/EXTI_lib.d ./Core/Src/EXTI_lib.o ./Core/Src/GPIO_Lib.d ./Core/Src/GPIO_Lib.o ./Core/Src/I2c_lib.d ./Core/Src/I2c_lib.o ./Core/Src/NVIC_lib.d ./Core/Src/NVIC_lib.o ./Core/Src/UART_lib.d ./Core/Src/UART_lib.o ./Core/Src/clocks_lib.d ./Core/Src/clocks_lib.o ./Core/Src/delay_timer_lib.d ./Core/Src/delay_timer_lib.o ./Core/Src/dht22.d ./Core/Src/dht22.o ./Core/Src/interrupts.d ./Core/Src/interrupts.o ./Core/Src/lcd.d ./Core/Src/lcd.o ./Core/Src/main.d ./Core/Src/main.o ./Core/Src/sysmem.d ./Core/Src/sysmem.o ./Core/Src/system_stm32f4xx.d ./Core/Src/system_stm32f4xx.o ./Core/Src/systick_IR_\ timer_lib.d ./Core/Src/systick_IR_\ timer_lib.o
+	-$(RM) ./Core/Src/EXTI_lib.d ./Core/Src/EXTI_lib.o ./Core/Src/GPIO_Lib.d ./Core/Src/GPIO_Lib.o ./Core/Src/I2c_lib.d ./Core/Src/I2c_lib.o ./Core/Src/NVIC_lib.d ./Core/Src/NVIC_lib.o ./Core/Src/RTC.d ./Core/Src/RTC.o ./Core/Src/UART_lib.d ./Core/Src/UART_lib.o ./Core/Src/clocks_lib.d ./Core/Src/clocks_lib.o ./Core/Src/delay_timer_lib.d ./Core/Src/delay_timer_lib.o ./Core/Src/dht22.d ./Core/Src/dht22.o ./Core/Src/interrupts.d ./Core/Src/interrupts.o ./Core/Src/lcd.d ./Core/Src/lcd.o ./Core/Src/main.d ./Core/Src/main.o ./Core/Src/sysmem.d ./Core/Src/sysmem.o ./Core/Src/system_stm32f4xx.d ./Core/Src/system_stm32f4xx.o ./Core/Src/systick_IR_\ timer_lib.d ./Core/Src/systick_IR_\ timer_lib.o
 
 .PHONY: clean-Core-2f-Src
 

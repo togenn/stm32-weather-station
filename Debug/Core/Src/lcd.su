@@ -1,2 +1,2 @@
-lcd.c:4:6:init_lcd	8	static
-lcd.c:47:6:write_data_pins	24	static
+lcd.c:9:16:get_busy_flag	24	static
+lcd.c:21:6:LCD_init	16	static

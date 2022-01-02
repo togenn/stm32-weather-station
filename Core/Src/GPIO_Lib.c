@@ -28,66 +28,24 @@ static void enable_GPIOx_clock(GPIO_TypeDef *gpio) {
 	}
 }
 
-void init_pin(pin_type *pin, GPIO_TypeDef *_gpio, uint8_t _pin_num,
-		uint8_t _mode) {
-	pin->gpio = _gpio;
-	pin->pin_num = _pin_num;
+void init_pin(pin_type *pin) {
 
-	enable_GPIOx_clock(_gpio);
+	enable_GPIOx_clock(pin->gpio);
 
-	if (_mode < 3) {
-		set_input(pin, _mode);
-	} else if (_mode != alternate_function) {
-		set_output(pin, _mode);
-	} else {
-		pin->gpio->MODER |= 2u << ((pin->pin_num * 2));
-	}
+	change_mode(pin);
 
-}
-
-void set_AF_num(pin_type* pin, uint8_t num) {
 	uint8_t reg_H_L = pin->pin_num < 8 ? 0 : 1;
-
-	pin->gpio->AFR[reg_H_L] |= (15u & num) << (pin->pin_num * 4);
+	pin->gpio->AFR[reg_H_L] |= pin->AF_num << (pin->pin_num * 4);
 }
 
-void set_input(pin_type *pin, uint8_t mode) {
+void change_mode(pin_type *pin) {
 	pin->gpio->MODER &= ~(3u << ((pin->pin_num * 2)));
 	pin->gpio->PUPDR &= ~(3u << ((pin->pin_num * 2)));
+	pin->gpio->OTYPER &= ~(1u << pin->pin_num);
 
-	switch (mode) {
-	case INPUT_NO_PUPD:
-		break;
-
-	case INPUT_PU:
-		pin->gpio->PUPDR |= (PU << ((pin->pin_num * 2)));
-		break;
-
-	case INPUT_PD:
-		pin->gpio->PUPDR |= (PD << ((pin->pin_num * 2)));
-
-	default:
-		break;
-
-	}
-
-}
-
-void set_output(pin_type *pin, uint8_t mode) {
-	pin->gpio->MODER &= ~(3u << ((pin->pin_num * 2)));
-	pin->gpio->MODER |= 1u << ((pin->pin_num * 2));
-
-	switch (mode) {
-	case OUTPUT_PP:
-		break;
-
-	case OUTPUT_OD:
-		pin->gpio->OTYPER |= (OD << (pin->pin_num));
-		break;
-
-	default:
-		break;
-	}
+	pin->gpio->MODER |= pin->mode << (pin->pin_num * 2);
+	pin->gpio->OTYPER |= pin->PP_OD << pin->pin_num;
+	pin->gpio->PUPDR |= pin->push_pull << (pin->pin_num * 2);
 
 }
 

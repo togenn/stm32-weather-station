@@ -1,28 +1,12 @@
-#ifndef __LCD_H
-#define __LCD_H
+#ifndef __LCD_LIB_H
+#define __LCD_LIB_H
 
-#include "GPIO_Lib.h"
+#include "I2C_lib.h"
 
-pin_type data0;
-pin_type data1;
-pin_type data2;
-pin_type data3;
-pin_type data4;
-pin_type data5;
-pin_type data6;
-pin_type data7;
-pin_type RS;
-pin_type RW;
-pin_type E;
+void LCD_init(I2C_handle_type* I2C_handle);
 
-typedef enum {
-	instruction,
-	data
-} write_type;
+void LCD_set_cursor(I2C_handle_type* I2C_handle, uint8_t row, uint8_t column);
 
-pin_type data_pins[8];
-
-void init_lcd(void);
-void write_data_pins(uint8_t data);
+void LCD_write(I2C_handle_type* I2C_handle, char* text);
 
 #endif

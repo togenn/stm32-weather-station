@@ -35,6 +35,9 @@ void I2C_pins_init(); //user definable
 uint8_t I2C_transmit_data(I2C_handle_type* handle);
 uint8_t I2C_transmit_data_and_wait(I2C_handle_type* handle);
 
+uint8_t I2C_receive_data(I2C_handle_type* handle);
+uint8_t I2C_receive_data_and_wait(I2C_handle_type* handle);
+
 void I2C_handle_EV(I2C_handle_type* handle);
 
 /*

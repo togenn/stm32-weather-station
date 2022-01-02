@@ -1,4 +1,4 @@
-Core/Src/lcd.o: ../Core/Src/lcd.c ../Core/Inc/lcd.h ../Core/Inc/I2C_lib.h \
+Core/Src/RTC.o: ../Core/Src/RTC.c ../Core/Inc/RTC.h \
  ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h \
  ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f401xe.h \
  ../Drivers/CMSIS/Include/core_cm4.h \
@@ -8,9 +8,7 @@ Core/Src/lcd.o: ../Core/Src/lcd.c ../Core/Inc/lcd.h ../Core/Inc/I2C_lib.h \
  ../Drivers/CMSIS/Include/mpu_armv7.h \
  ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h
 
-../Core/Inc/lcd.h:
-
-../Core/Inc/I2C_lib.h:
+../Core/Inc/RTC.h:
 
 ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h:
 

@@ -1,25 +1,7 @@
 #ifndef __GPIO_LIB_H
 #define __GPIO_LIB_H
 
-#define STM32F401xx
-#include "stm32f4xx.h"                  // Device header
-
-#define no_PUPD 0x0
-#define PU 0x1
-#define PD 0x2
-
-#define PP 0x0
-#define OD 0x1
-
-// pin modes
-#define INPUT_NO_PUPD 0
-#define INPUT_PU 1
-#define INPUT_PD 2
-
-#define OUTPUT_PP 3
-#define OUTPUT_OD 4
-
-#define alternate_function 5
+#include "stm32f4xx.h"
 
 
 #define GPIOA_CLOCK_EN 0x1u
@@ -35,16 +17,37 @@ typedef enum {
     HIGH
 } pin_state;
 
+typedef enum {
+    INPUT,
+    OUTPUT,
+	ALTERNATE_FUNCTION,
+	ANALOG
+} pin_mode;
+
+typedef enum {
+    PP,
+    OD
+} PP_OD_type;
+
+typedef enum {
+	NO_PULL,
+    PULL_UP,
+    PULL_DOWN
+} PUSH_PULL_type;
+
 typedef struct {
     GPIO_TypeDef* gpio;
-    uint32_t pin_num;
+    uint8_t pin_num;
+    pin_mode mode;
+    PP_OD_type PP_OD;
+    PUSH_PULL_type push_pull;
+    uint8_t AF_num;
 } pin_type;
 
 
-void init_pin(pin_type* pin, GPIO_TypeDef* _gpio, uint8_t pin_num, uint8_t _mode);
-void set_input(pin_type* pin, uint8_t mode);
-void set_output(pin_type* pin, uint8_t mode);
-void set_AF_num(pin_type* pin, uint8_t num);
+void init_pin(pin_type* pin);
+void change_mode(pin_type* pin);
+
 pin_state write_pin(pin_type* pin, pin_state state);
 pin_state read_pin(pin_type* pin);
 pin_state toggle_pin(pin_type* pin);

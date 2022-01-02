@@ -1,61 +1,28 @@
-#include <systick_IR_timer_lib.h>
 #include "lcd.h"
 
-void init_lcd() {
+//1st bit - RS
+//2nd bit - RW
+//3rd bit - E
+//4th-7th - D4-D7
+//8th - background light
 
-	init_pin(&data0, GPIOA, 5, OUTPUT_PP);
-	init_pin(&data1, GPIOA, 6, OUTPUT_PP);
-	init_pin(&data2, GPIOA, 7, OUTPUT_PP);
-	init_pin(&data3, GPIOB, 6, OUTPUT_PP);
-	init_pin(&data4, GPIOB, 10, OUTPUT_PP);
-	init_pin(&data5, GPIOB, 4, OUTPUT_PP);
-	init_pin(&data6, GPIOB, 5, OUTPUT_PP);
-	init_pin(&data7, GPIOB, 3, OUTPUT_PP);
-	init_pin(&RS, GPIOB, 8, OUTPUT_PP);
-	//init_pin(&RW, GPIOA, 6, output, no_PUPD);
-	init_pin(&E, GPIOB, 9, OUTPUT_PP);
+static uint8_t get_busy_flag(I2C_handle_type *I2C_handle) {
+	uint8_t command = 2u;
+	I2C_handle->data = &command;
+	I2C_handle->data_len = 1;
+	I2C_transmit_data_and_wait(I2C_handle);
 
-	data_pins[0] = data0;
-	data_pins[1] = data1;
-	data_pins[2] = data2;
-	data_pins[3] = data3;
-	data_pins[4] = data4;
-	data_pins[5] = data5;
-	data_pins[6] = data6;
-	data_pins[7] = data7;
+	uint8_t busy_flag = 0;
+	I2C_handle->data = &busy_flag;
+	I2C_handle->data_len = 1;
+	busy_flag = I2C_receive_data_and_wait(I2C_handle);
+}
 
-	/*
-	 delay(20);
-
-	 write_data_pins(60u);
-
-	 delay(5);
-
-	 write_data_pins(60u);
-
-	 delay_micros(150);
-
-	 write_data_pins(60u);
-
-	 delay(50);
-
-	 write_data_pins(1u);
-	 */
+void LCD_init(I2C_handle_type *I2C_handle) {
+	I2C_handle->addressing_mode = I2C_7_BIT_ADDRESSING;
+	I2C_handle->slave_address = 0x27;
+	I2C_init(&I2C_handle);
 
 }
 
-void write_data_pins(uint8_t data) {
-	write_pin(&RS, LOW);
-	write_pin(&E, LOW);
-	delay(10);
-
-	for (int i = 0; i < 8; i++) {
-		write_pin(&(data_pins[i]), (data >> i) & 0x01);
-		delay(1);
-	}
-
-	write_pin(&E, HIGH);
-	delay(500);
-	write_pin(&E, LOW);
-}
-
+void LCD_write(I2C_handle_type *I2C_handle, char *text);

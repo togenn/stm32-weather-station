@@ -1,0 +1,4 @@
+RTC.c:11:17:bin2bcd	24	static
+RTC.c:25:16:bcd2bin	24	static
+RTC.c:39:6:RTC_init	24	static
+RTC.c:88:16:get_date_time	32	static

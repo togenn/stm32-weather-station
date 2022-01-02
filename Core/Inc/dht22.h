@@ -18,7 +18,8 @@ struct dht22_data dht22_data;
 
 uint8_t dht_status;
 
-//sensor is connected to PA10
+
+//init gpio and pin_num members before calling init_dht22()
 pin_type dht22;
 
 void dht22_handle_delay_IT(void);

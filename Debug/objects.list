@@ -2,6 +2,7 @@
 "./Core/Src/GPIO_Lib.o"
 "./Core/Src/I2c_lib.o"
 "./Core/Src/NVIC_lib.o"
+"./Core/Src/RTC.o"
 "./Core/Src/UART_lib.o"
 "./Core/Src/clocks_lib.o"
 "./Core/Src/delay_timer_lib.o"

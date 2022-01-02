@@ -4,10 +4,10 @@
 #include "NVIC_lib.h"
 
 
-uint16_t temperature_temp;
-uint16_t humidity_temp;
+uint16_t temperature_tmp;
+uint16_t humidity_tmp;
 
-int bits_read;
+uint8_t bits_read;
 
 static void read_bit(void) {
 	pin_state value = read_pin(&dht22);
@@ -16,11 +16,11 @@ static void read_bit(void) {
 
 		disable_EXTI(10);
 
-		dht22_data.temperature = temperature_temp;
-		dht22_data.humidity = humidity_temp;
+		dht22_data.temperature = temperature_tmp;
+		dht22_data.humidity = humidity_tmp;
 
-		temperature_temp = 0;
-		humidity_temp = 0;
+		temperature_tmp = 0;
+		humidity_tmp = 0;
 		bits_read = -1;
 
 		dht_status = SLEEPING;
@@ -28,11 +28,11 @@ static void read_bit(void) {
 
 	} else if (bits_read < 16) {
 
-		humidity_temp |= (value << (15 - bits_read));
+		humidity_tmp |= (value << (15 - bits_read));
 
 	} else if (bits_read < 32) {
 
-		temperature_temp |= (value << (31 - bits_read));
+		temperature_tmp |= (value << (31 - bits_read));
 
 	}
 
@@ -52,7 +52,8 @@ void dht22_handle_delay_IT(void) {
 
 		dht_status = INITIALIZING_2;
 
-		set_input(&dht22, INPUT_PU);
+		dht22.mode = INPUT;
+		change_mode(&dht22);
 
 		IR_timer_micros(185);
 
@@ -73,7 +74,11 @@ void init_dht22() {
 
 	dht_status = SLEEPING;
 
-	init_pin(&dht22, GPIOA, 10, INPUT_PU);
+	dht22.PP_OD = PP;
+	dht22.mode = INPUT;
+	dht22.push_pull = PULL_UP;
+
+	init_pin(&dht22);
 	enable_IR(EXTI15_10_IRQn);
 
 }
@@ -82,7 +87,8 @@ uint8_t dht22_get_data() {
 	if (dht_status == SLEEPING) {
 		dht_status = INITIALIZING;
 
-		set_output(&dht22, OUTPUT_PP);
+		dht22.mode = OUTPUT;
+		change_mode(&dht22);
 		write_pin(&dht22, LOW);
 		IR_timer_micros(1000);
 
