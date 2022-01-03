@@ -67,7 +67,7 @@ int main(void) {
 
 
 	uart_init(USART2, UART_8BIT, UART_1_STOP_BITS, 115200);
-	uint8_t data[2] = {0xFF, 0x1};
+	uint8_t data[2] = {0x1, 0xFF};
 
 
 	memset(&I2C_handle, 0, sizeof(I2C_handle));
@@ -94,11 +94,11 @@ int main(void) {
 
 	I2C_transmit_data_and_wait(&I2C_handle);
 
-	//data = 0x1u;
-	I2C_handle.data = &data;
+	uint8_t data2 = 0x1u;
+	I2C_handle.data = &data2;
 	I2C_handle.data_len = 1;
 
-	//I2C_transmit_data(&I2C_handle);
+	I2C_transmit_data(&I2C_handle);
 
 	while (1) {
 		//date_time = get_date_time();

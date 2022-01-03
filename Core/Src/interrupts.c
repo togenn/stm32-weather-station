@@ -34,6 +34,8 @@ void I2C1_ER_IRQHandler() {
 	sprintf(number, "%d", error_code);
 
 	uart_transmit_data(USART2, (uint8_t*) number, 2);
+
+	while(1);
 }
 
 

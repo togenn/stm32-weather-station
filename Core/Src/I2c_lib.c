@@ -33,11 +33,23 @@ static void I2C_enable_IR(I2C_handle_type *handle) {
 	}
 }
 
+static void I2C_disable_IR(I2C_handle_type *handle) {
+	if (handle->peripheral == I2C1) {
+		disable_IR(I2C1_EV_IRQn);
+		disable_IR(I2C1_ER_IRQn);
+	} else if (handle->peripheral == I2C2) {
+		disable_IR(I2C2_EV_IRQn);
+		disable_IR(I2C2_ER_IRQn);
+	} else if (handle->peripheral == I2C3) {
+		disable_IR(I2C3_EV_IRQn);
+		disable_IR(I2C3_ER_IRQn);
+	}
+}
+
 void I2C_init(I2C_handle_type *handle) {
 
 	I2C_pins_init();
 	I2C_enable_clock(handle);
-	I2C_enable_IR(handle);
 
 	//Program the peripheral input clock in I2C_CR2 Register in order to generate correct timings
 	uint32_t APB1_clk = get_APB1_clock();
@@ -60,8 +72,9 @@ static uint8_t start_communication(I2C_handle_type *handle) {
 		return 1;
 	}
 
+	I2C_enable_IR(handle);
+
 	//enable the peripheral
-	handle->peripheral->CR1 &= ~1u;
 	handle->peripheral->CR1 |= 1u;
 
 	//generate a Start condition
@@ -146,21 +159,27 @@ static void handle_transmitting(I2C_handle_type *handle) {
 		handle->peripheral->DR = handle->slave_address << 1;
 
 	} else if (handle->peripheral->SR1 & 2u) {
-		//address sent, clear flag
+		//address sent
 		(void) handle->peripheral->SR2;
 
 	} else if (handle->peripheral->SR1 & (1u << 7)) {
 		//data register empty, write next frame to DR
 
-		handle->peripheral->DR = *(handle->data++);
-
 		if (handle->data_len-- == 0) {
 			//generate stop condition
 			handle->peripheral->CR1 |= 1u << 9;
 
+			handle->peripheral->CR1 &= ~1u;
+			I2C_disable_IR(handle);
 			handle->status = I2C_STATUS_IDLE;
 
+			return;
+
 		}
+
+		handle->peripheral->DR = *(handle->data++);
+
+
 	}
 }
 
@@ -198,6 +217,7 @@ static void handle_receiving(I2C_handle_type *handle) {
 			repeated_start = 0;
 
 			handle->status = I2C_STATUS_IDLE;
+			handle->peripheral->CR1 &= ~1u;
 
 		}
 
@@ -215,6 +235,7 @@ static void handle_receiving(I2C_handle_type *handle) {
 			repeated_start = 0;
 
 			handle->status = I2C_STATUS_IDLE;
+			I2C_disable_IR(handle);
 
 		}
 	}
