@@ -9,12 +9,17 @@
 #define INC_RTC_H_
 
 #include <stdint.h>
+#include "stm32f4xx.h"
 
-#define ALARM_A 0
-#define ALARM_B 1
+typedef enum {
+	alarm_A,
+	alarm_B
+} alarm_type;
 
-#define MASK_DISABLE 0
-#define MASK_ENABLE 1
+typedef enum {
+	mask_disable,
+	mask_enable
+} mask_type;
 
 typedef enum {
 	monday = 1, tuesday, wednesday, thurday, friday, saturday, sunday
@@ -49,12 +54,13 @@ typedef struct {
 	uint8_t hours;
 	uint8_t date;
 	uint8_t day;
-} alarm_type;
+} alarm_mask_type;
 
 void RTC_init(date_time_type *time);
 
 date_time_type get_date_time();
 
-void set_alarm(uint8_t alarm);
+void set_alarm(date_time_type* time, alarm_mask_type* alarm_mask, alarm_type alarm);
+
 
 #endif /* INC_RTC_H_ */

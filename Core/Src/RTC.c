@@ -6,7 +6,7 @@
  */
 
 #include "RTC.h"
-#include "stm32f4xx.h"
+
 
 static uint16_t bin2bcd(uint8_t bin) {
 	uint8_t digit;
@@ -89,8 +89,8 @@ date_time_type get_date_time() {
 
 	date_time_type date_time;
 
-	date_time.time_format = (RTC->CR & (1u << 6)) >> 6;
-	date_time.am_pm = (RTC->TR & (1u << 22)) >> 22;
+	date_time.time_format = (RTC->CR >> 6) & 1u;
+	date_time.am_pm = (RTC->TR >> 22) & 1u;
 
 	date_time.seconds = bcd2bin(RTC->TR & 0x7Fu);
 	date_time.minutes = bcd2bin((RTC->TR >> 8) & 0x7Fu);
@@ -103,5 +103,23 @@ date_time_type get_date_time() {
 	date_time.day = ((RTC->DR >> 13) & 0x7u);
 
 	return date_time;
+}
+
+
+void set_alarm(date_time_type* time, alarm_mask_type* alarm_mask, alarm_type alarm) {
+
+	uint32_t RTC_base = 0x40002800;
+
+	volatile uint32_t* alarm_reg = (uint32_t*) (alarm ? RTC_base + 0x20 : RTC_base + 0x1C);
+
+	*alarm_reg |= (bin2bcd(time->seconds) | (alarm_mask->seconds << 7)) & 0xFF;
+
+	*alarm_reg |= ((bin2bcd(time->minutes) | (alarm_mask->minutes << 7)) & 0xFF) << 8;
+
+	*alarm_reg |= ((bin2bcd(time->hours) | (alarm_mask->hours << 7) | (time->am_pm << 6)) & 0xFF) << 16;
+
+	uint8_t day;
+	*alarm_reg |= ((bin2bcd(time->hours) | (alarm_mask->hours << 7) | (time->am_pm << 6)) & 0xFF) << 16;
+
 }
 
