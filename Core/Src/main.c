@@ -80,8 +80,8 @@ int main(void) {
 	date_time_type date_time;
 	date_time.date = 29;
 	date_time.day = wednesday;
-	date_time.hours = 13;
-	date_time.minutes = 40;
+	date_time.hours = 0;
+	date_time.minutes = 0;
 	date_time.month = 12;
 	date_time.seconds = 0;
 	date_time.time_format = format_24;
@@ -89,24 +89,31 @@ int main(void) {
 
 	RTC_init(&date_time);
 
+	date_time.seconds = 5;
+	alarm_mask_type mask;
+	memset(&mask, 0, sizeof(mask));
+	mask.seconds = mask_enable;
+
+	set_alarm(&date_time, &mask, alarm_A);
+
 	I2C_init(&I2C_handle);
 	char time[22];
 
-	I2C_transmit_data_and_wait(&I2C_handle);
+	//I2C_transmit_data_and_wait(&I2C_handle);
 
 	uint8_t data2 = 0x1u;
 	I2C_handle.data = &data2;
 	I2C_handle.data_len = 1;
 
-	I2C_transmit_data(&I2C_handle);
+	//I2C_transmit_data(&I2C_handle);
 
 	while (1) {
-		//date_time = get_date_time();
-		//format_date_time(time, &date_time);
-		//uart_transmit_data(USART2, (uint8_t*) time, sizeof(time) / sizeof(time[0]));
+		date_time = get_date_time();
+		format_date_time(time, &date_time);
+		uart_transmit_data(USART2, (uint8_t*) time, sizeof(time) / sizeof(time[0]));
 		//dht22_get_data();
 		//toggle_pin(&test_pin);
-		//delay(2000, TIM2);
+		delay(2000, TIM2);
 
 	}
 

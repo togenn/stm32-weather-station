@@ -38,4 +38,8 @@ void I2C1_ER_IRQHandler() {
 	while(1);
 }
 
+void RTC_Alarm_IRQHandler() {
+
+}
+
 

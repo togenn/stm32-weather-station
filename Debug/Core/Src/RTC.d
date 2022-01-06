@@ -6,7 +6,8 @@ Core/Src/RTC.o: ../Core/Src/RTC.c ../Core/Inc/RTC.h \
  ../Drivers/CMSIS/Include/cmsis_compiler.h \
  ../Drivers/CMSIS/Include/cmsis_gcc.h \
  ../Drivers/CMSIS/Include/mpu_armv7.h \
- ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h
+ ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h \
+ ../Core/Inc/NVIC_lib.h ../Core/Inc/EXTI_lib.h
 
 ../Core/Inc/RTC.h:
 
@@ -25,3 +26,7 @@ Core/Src/RTC.o: ../Core/Src/RTC.c ../Core/Inc/RTC.h \
 ../Drivers/CMSIS/Include/mpu_armv7.h:
 
 ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h:
+
+../Core/Inc/NVIC_lib.h:
+
+../Core/Inc/EXTI_lib.h:

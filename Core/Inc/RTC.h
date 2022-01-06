@@ -53,14 +53,17 @@ typedef struct {
 	uint8_t minutes;
 	uint8_t hours;
 	uint8_t date;
-	uint8_t day;
+	uint8_t weekday;
 } alarm_mask_type;
 
 void RTC_init(date_time_type *time);
 
 date_time_type get_date_time();
 
+
+//handle interrupt in RTC_Alarm_IRQHandler
 void set_alarm(date_time_type* time, alarm_mask_type* alarm_mask, alarm_type alarm);
+void disable_alarm(alarm_type alarm);
 
 
 #endif /* INC_RTC_H_ */

@@ -62,7 +62,7 @@ void dht22_handle_delay_IT(void) {
 		dht_status = SENDING_DATA;
 
 		//enable interrupt for data pin on rising edge
-		enable_EXTI(10, EXTI_GPIOA, EXTI_RE);
+		enable_EXTI_GPIO(10, EXTI_GPIOA, EXTI_RE);
 
 	} else if (dht_status == SENDING_DATA) {
 		read_bit();

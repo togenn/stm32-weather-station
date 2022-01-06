@@ -2,4 +2,4 @@ main.c:14:6:dht22_application_callback	8	static
 main.c:20:6:uart_pins_init	32	static
 main.c:38:6:I2C_pins_init	32	static
 main.c:55:6:format_date_time	88	static
-main.c:62:5:main	56	static
+main.c:62:5:main	80	static

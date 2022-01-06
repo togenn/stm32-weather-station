@@ -24,8 +24,11 @@
 
 
 //gpio: EXTI_GPIOx
-void enable_EXTI(uint8_t pin_num, uint8_t gpio, uint8_t edge);
-void disable_EXTI(uint8_t pin_num);
+void enable_EXTI_GPIO(uint8_t pin_num, uint8_t gpio, uint8_t edge);
+void disable_EXTI_GPIO(uint8_t pin_num);
+
+void enable_EXTI(uint8_t EXTI_num, uint8_t edge);
+void disable_EXTI(uint8_t EXTI_num);
 
 
 #endif /* INC_EXTI_LIB_H_ */
