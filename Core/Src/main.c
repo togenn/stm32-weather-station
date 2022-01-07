@@ -2,25 +2,48 @@
 #include "stm32f4xx.h"
 #include "UART_lib.h"
 #include "dht22.h"
-#include <stdio.h>
-#include <systick_IR_timer_lib.h>
+#include "systick_IR_timer_lib.h"
 #include "delay_timer_lib.h"
 #include "main.h"
 #include "string.h"
 #include "RTC.h"
 #include "lcd.h"
 #include "math.h"
+#include <stdio.h>
 
-pin_type test_pin;
+void int2string(uint16_t num, char *buffer) {
+
+	sprintf(buffer, "%d", num);
+
+}
+
+void format_dht22_values(char *buffer, uint16_t value) {
+	uint8_t decimal = value % 10;
+	uint8_t integer = value / 10;
+
+	char integer_str[2];
+	int2string(integer, integer_str);
+
+	char decimal_str[1];
+	int2string(decimal, decimal_str);
+
+	buffer = strcat(strcat(integer_str, ","), decimal_str);
+}
 
 void dht22_application_callback() {
-	printf("%d\n", (int) dht22_data.temperature);
-	printf("%d\n", (int) dht22_data.humidity);
+
+	char temp[4];
+	char humidity[4];
+	format_dht22_values(temp, dht22_data.temperature);
+	format_dht22_values(humidity, dht22_data.humidity);
+
+	LCD_write(&I2C_handle, temp, 4, 0, 0);
+	LCD_write(&I2C_handle, humidity, 4, 0, 5);
 
 }
 
 void uart_pins_init() {
-	//pins PA2 and PA3
+//pins PA2 and PA3
 	pin_type uartTX, uartRX;
 	uartTX.AF_num = 7;
 	uartTX.PP_OD = PP;
@@ -54,12 +77,6 @@ void I2C_pins_init() {
 
 }
 
-void format_date_time(char *buffer, date_time_type *date_time) {
-	char format[] = "%02d:%02d:%02d  %02d/%02d/20%02d\n\r";
-	sprintf(buffer, format, (int) date_time->hours, (int) date_time->minutes,
-			(int) date_time->seconds, (int) date_time->date,
-			(int) date_time->month, (int) date_time->year);
-}
 
 void init_time() {
 
@@ -75,19 +92,15 @@ void init_time() {
 
 	RTC_init(&date_time);
 
-	date_time.hours = 0;
-	date_time.minutes = 0;
 	date_time.seconds = 0;
 	alarm_mask_type mask;
 	memset(&mask, 0, sizeof(mask));
 	mask.seconds = mask_enable;
-	mask.minutes = mask_enable;
-	mask.hours = mask_enable;
 
 	set_alarm(&date_time, &mask, alarm_A);
 }
 
-void debug_pins(I2C_handle_type* handle) {
+void debug_pins(I2C_handle_type *handle) {
 	uint8_t data = 1;
 	handle->data = &data;
 	handle->data_len = 1;
@@ -114,7 +127,7 @@ int main(void) {
 
 	LCD_init(&I2C_handle);
 
-	while(1) {
+	while (1) {
 
 	}
 }
