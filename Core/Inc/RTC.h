@@ -22,7 +22,7 @@ typedef enum {
 } mask_type;
 
 typedef enum {
-	monday = 1, tuesday, wednesday, thurday, friday, saturday, sunday
+	monday = 1, tuesday, wednesday, thursday, friday, saturday, sunday
 } weekday;
 
 typedef enum {

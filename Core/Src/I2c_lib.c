@@ -135,8 +135,8 @@ uint8_t I2C_receive_data_and_wait(I2C_handle_type *handle) {
 static void handle_start_condition(I2C_handle_type *handle) {
 
 	if (handle->addressing_mode == I2C_7_BIT_ADDRESSING) {
-
-		handle->peripheral->DR = handle->slave_address << 1;
+		uint8_t rw = handle->status == I2C_STATUS_RECEIVING ? 1 : 0;
+		handle->peripheral->DR = (handle->slave_address << 1) | rw;
 	} else {
 		uint8_t header = 0xF0;
 		uint8_t bits_9_8 = handle->slave_address >> 8;
@@ -210,16 +210,14 @@ static void handle_receiving(I2C_handle_type *handle) {
 				&& (handle->addressing_mode == I2C_10_BIT_ADDRESSING)) {
 			handle->peripheral->CR1 |= 1u << 8;
 			repeated_start = 1;
+
 		} else if (handle->data_len == 1) {
 			//generate stop condition and nack
 			handle->peripheral->CR1 &= ~(1u << 10);
-			handle->peripheral->CR1 |= 1u << 9;
-			repeated_start = 0;
 
-			handle->status = I2C_STATUS_IDLE;
-			handle->peripheral->CR1 &= ~1u;
 
 		}
+
 
 		(void) handle->peripheral->SR2;
 
@@ -228,13 +226,14 @@ static void handle_receiving(I2C_handle_type *handle) {
 
 		*(handle->data++) = handle->peripheral->DR;
 
-		if (--handle->data_len == 1) {
+		if (--handle->data_len < 2) {
 			//generate stop condition and nack
 			handle->peripheral->CR1 &= ~(1u << 10);
 			handle->peripheral->CR1 |= 1u << 9;
 			repeated_start = 0;
 
 			handle->status = I2C_STATUS_IDLE;
+			handle->peripheral->CR1 &= ~1u;
 			I2C_disable_IR(handle);
 
 		}

@@ -10,5 +10,5 @@ I2c_lib.c:123:9:I2C_receive_data_and_wait	16	static
 I2c_lib.c:135:13:handle_start_condition	24	static
 I2c_lib.c:150:13:handle_transmitting	16	static
 I2c_lib.c:186:13:handle_receiving	24	static
-I2c_lib.c:244:6:I2C_handle_EV	16	static
-I2c_lib.c:255:9:I2C_handle_ER	24	static
+I2c_lib.c:243:6:I2C_handle_EV	16	static
+I2c_lib.c:254:9:I2C_handle_ER	24	static

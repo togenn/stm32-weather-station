@@ -8,7 +8,7 @@ Core/Src/interrupts.o: ../Core/Src/interrupts.c \
  ../Drivers/CMSIS/Include/mpu_armv7.h \
  ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h \
  ../Core/Inc/dht22.h ../Core/Inc/GPIO_Lib.h ../Core/Inc/main.h \
- ../Core/Inc/I2C_lib.h ../Core/Inc/UART_lib.h
+ ../Core/Inc/I2C_lib.h ../Core/Inc/RTC.h ../Core/Inc/UART_lib.h
 
 ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h:
 
@@ -33,5 +33,7 @@ Core/Src/interrupts.o: ../Core/Src/interrupts.c \
 ../Core/Inc/main.h:
 
 ../Core/Inc/I2C_lib.h:
+
+../Core/Inc/RTC.h:
 
 ../Core/Inc/UART_lib.h:

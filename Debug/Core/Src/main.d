@@ -9,7 +9,8 @@ Core/Src/main.o: ../Core/Src/main.c \
  ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h \
  ../Core/Inc/UART_lib.h ../Core/Inc/dht22.h ../Core/Inc/GPIO_Lib.h \
  ../Core/Inc/systick_IR_timer_lib.h ../Core/Inc/delay_timer_lib.h \
- ../Core/Inc/main.h ../Core/Inc/I2C_lib.h ../Core/Inc/RTC.h
+ ../Core/Inc/main.h ../Core/Inc/I2C_lib.h ../Core/Inc/RTC.h \
+ ../Core/Inc/RTC.h ../Core/Inc/lcd.h
 
 ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h:
 
@@ -42,3 +43,7 @@ Core/Src/main.o: ../Core/Src/main.c \
 ../Core/Inc/I2C_lib.h:
 
 ../Core/Inc/RTC.h:
+
+../Core/Inc/RTC.h:
+
+../Core/Inc/lcd.h:

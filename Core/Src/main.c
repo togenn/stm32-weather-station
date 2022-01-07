@@ -8,6 +8,8 @@
 #include "main.h"
 #include "string.h"
 #include "RTC.h"
+#include "lcd.h"
+#include "math.h"
 
 pin_type test_pin;
 
@@ -59,62 +61,60 @@ void format_date_time(char *buffer, date_time_type *date_time) {
 			(int) date_time->month, (int) date_time->year);
 }
 
-int main(void) {
+void init_time() {
 
-	init_systick();
-	init_timer(TIM2, 1);
-	init_dht22();
-
-
-	uart_init(USART2, UART_8BIT, UART_1_STOP_BITS, 115200);
-	uint8_t data[2] = {0x1, 0xFF};
-
-
-	memset(&I2C_handle, 0, sizeof(I2C_handle));
-	I2C_handle.addressing_mode = I2C_7_BIT_ADDRESSING;
-	I2C_handle.peripheral = I2C1;
-	I2C_handle.slave_address = 0x27;
-	I2C_handle.data = data;
-	I2C_handle.data_len = 2;
-
-	date_time_type date_time;
-	date_time.date = 29;
-	date_time.day = wednesday;
-	date_time.hours = 0;
-	date_time.minutes = 0;
-	date_time.month = 12;
+	memset(&date_time, 0, sizeof(date_time));
+	date_time.date = 6;
+	date_time.day = thursday;
+	date_time.hours = 9;
+	date_time.minutes = 8;
+	date_time.month = 1;
 	date_time.seconds = 0;
 	date_time.time_format = format_24;
-	date_time.year = 21;
+	date_time.year = 22;
 
 	RTC_init(&date_time);
 
-	date_time.seconds = 5;
+	date_time.hours = 0;
+	date_time.minutes = 0;
+	date_time.seconds = 0;
 	alarm_mask_type mask;
 	memset(&mask, 0, sizeof(mask));
 	mask.seconds = mask_enable;
+	mask.minutes = mask_enable;
+	mask.hours = mask_enable;
 
 	set_alarm(&date_time, &mask, alarm_A);
+}
 
-	I2C_init(&I2C_handle);
-	char time[22];
+void debug_pins(I2C_handle_type* handle) {
+	uint8_t data = 1;
+	handle->data = &data;
+	handle->data_len = 1;
 
-	//I2C_transmit_data_and_wait(&I2C_handle);
+	for (uint32_t i = 0; i < 8; i++) {
 
-	uint8_t data2 = 0x1u;
-	I2C_handle.data = &data2;
-	I2C_handle.data_len = 1;
-
-	//I2C_transmit_data(&I2C_handle);
-
-	while (1) {
-		date_time = get_date_time();
-		format_date_time(time, &date_time);
-		uart_transmit_data(USART2, (uint8_t*) time, sizeof(time) / sizeof(time[0]));
-		//dht22_get_data();
-		//toggle_pin(&test_pin);
-		delay(2000, TIM2);
+		I2C_transmit_data_and_wait(handle);
+		data = pow(2, i + 1);
+		handle->data = &data;
+		handle->data_len = 1;
 
 	}
+}
 
+int main(void) {
+	uart_init(USART2, UART_8BIT, UART_1_STOP_BITS, 115200);
+
+	I2C_handle.peripheral = I2C1;
+	I2C_handle.addressing_mode = I2C_7_BIT_ADDRESSING;
+	I2C_handle.slave_address = 0x27;
+	I2C_init(&I2C_handle);
+
+	init_timer(TIM2, 2);
+
+	LCD_init(&I2C_handle);
+
+	while(1) {
+
+	}
 }
