@@ -53,8 +53,6 @@ void RTC_Alarm_IRQHandler() {
 
 	dht22_get_data_and_wait();
 
-
-	//TODO: fix format_dht22_values()
 	char temp[5];
 	char humidity[5];
 	format_dht22_values(temp, dht22_data.temperature);

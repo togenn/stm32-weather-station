@@ -14,23 +14,16 @@ void format_dht22_values(char *buffer, uint16_t value) {
 
 	char integer_str[3];
 	int2string(integer, integer_str);
-    integer_str[2] = '\0';
+    	integer_str[2] = '\0';
 
 	char decimal_str[2];
 	int2string(decimal, decimal_str);
-    decimal_str[1] = '\0';
+    	decimal_str[1] = '\0';
 
 	char comma[] = ",";
 	strcat(buffer, integer_str);
-    strcat(buffer, comma);
-    strcat(buffer, decimal_str);
+    	strcat(buffer, comma);
+    	strcat(buffer, decimal_str);
 	
 }
 
-int main() {
-    char temp[5] = "\0";
-    format_dht22_values(temp, 224);
-
-    printf("%s\n", temp);
-
-}
