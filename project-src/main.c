@@ -18,30 +18,9 @@ void int2string(uint16_t num, char *buffer) {
 
 }
 
-void format_dht22_values(char *buffer, uint16_t value) {
-	uint8_t decimal = value % 10;
-	uint8_t integer = value / 10;
-
-	char integer_str[2];
-	int2string(integer, integer_str);
-
-	char decimal_str[1];
-	int2string(decimal, decimal_str);
-
-	char comma[] = ",";
-	strncpy(buffer, strcat(strcat(integer_str, comma), decimal_str), 4);
-	buffer[4] = '\0';
-}
 
 void dht22_application_callback() {
 
-	char temp[5];
-	char humidity[5];
-	format_dht22_values(temp, dht22_data.temperature);
-	format_dht22_values(humidity, dht22_data.humidity);
-
-	LCD_write(&I2C_handle, temp, 4, 1, 0);
-	LCD_write(&I2C_handle, humidity, 4, 1, 5);
 
 }
 
@@ -107,6 +86,7 @@ void init_time() {
 
 
 int main(void) {
+	//uart is used for debugging
 	uart_init(USART2, UART_8BIT, UART_1_STOP_BITS, 115200);
 
 	init_systick();
@@ -128,6 +108,8 @@ int main(void) {
 	LCD_init(&I2C_handle);
 
 	init_time();
+
+	//TODO: enter sleep mode after initializing and make microcontroller to wake up only for interrupts (RTC alarm)
 
 	while (1) {
 
