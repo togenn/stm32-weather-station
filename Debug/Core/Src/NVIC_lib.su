@@ -1,5 +1,0 @@
-NVIC_lib.c:4:13:calculate_register_values	24	static
-NVIC_lib.c:15:13:calculate_ISER_values	16	static
-NVIC_lib.c:23:6:set_priority	16	static
-NVIC_lib.c:30:6:enable_IR	24	static
-NVIC_lib.c:38:6:disable_IR	24	static

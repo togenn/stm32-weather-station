@@ -1,5 +1,0 @@
-EXTI_lib.c:9:13:calculate_SYSCFG_values	24	static
-EXTI_lib.c:19:6:enable_EXTI_GPIO	24	static
-EXTI_lib.c:33:6:disable_EXTI_GPIO	24	static
-EXTI_lib.c:43:6:enable_EXTI	16	static
-EXTI_lib.c:62:6:disable_EXTI	16	static

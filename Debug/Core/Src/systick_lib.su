@@ -1,5 +1,0 @@
-systick_lib.c:4:13:_delay	24	static
-systick_lib.c:22:6:delay	16	static
-systick_lib.c:26:6:delay_micros	16	static
-systick_lib.c:30:6:delay_IR	16	static
-systick_lib.c:34:6:delay_micros_IR	16	static

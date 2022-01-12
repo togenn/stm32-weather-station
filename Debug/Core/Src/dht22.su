@@ -1,6 +1,0 @@
-dht22.c:12:13:read_bit	16	static
-dht22.c:43:6:dht22_handle_data_pin_IT	8	static
-dht22.c:49:6:dht22_handle_delay_IT	8	static
-dht22.c:73:6:init_dht22	8	static
-dht22.c:87:9:dht22_get_data	8	static
-dht22.c:102:6:dht22_get_data_and_wait	8	static

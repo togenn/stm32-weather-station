@@ -1,8 +1,0 @@
-RTC.c:12:17:bin2bcd	24	static
-RTC.c:26:16:bcd2bin	24	static
-RTC.c:40:13:unlock_write_protection	4	static
-RTC.c:46:13:enable_write_protection	4	static
-RTC.c:51:6:RTC_init	24	static
-RTC.c:101:16:get_date_time	32	static
-RTC.c:121:6:set_alarm	40	static
-RTC.c:165:6:disable_alarm	24	static
