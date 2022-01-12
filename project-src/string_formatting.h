@@ -4,7 +4,7 @@
 #include "stdint.h"
 #include "RTC.h"
 
-format_dht22_values(char *buffer, uint16_t value);
-format_date_time(char *buffer, date_time_type *date_time);
+void format_dht22_values(char *buffer, uint16_t value);
+void format_date_time(char *buffer, date_time_type *date_time);
 
 #endif

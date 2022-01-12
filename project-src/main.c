@@ -1,4 +1,4 @@
-#define STM32F401xx
+
 #include "stm32f4xx.h"
 #include "UART_lib.h"
 #include "dht22.h"
@@ -58,10 +58,10 @@ void I2C_pins_init() {
 void init_time() {
 
 	memset(&date_time, 0, sizeof(date_time));
-	date_time.date = 11;
-	date_time.day = tuesday;
-	date_time.hours = 17;
-	date_time.minutes = 23;
+	date_time.date = 12;
+	date_time.day = wednesday;
+	date_time.hours = 19;
+	date_time.minutes = 51;
 	date_time.month = 1;
 	date_time.seconds = 0;
 	date_time.time_format = format_24;
@@ -71,7 +71,7 @@ void init_time() {
 	set_priority(RTC_Alarm_IRQn, 3);
 
 	date_time.seconds = 0;
-	alarm_mask_type mask;
+
 	memset(&mask, 0, sizeof(mask));
 
 
@@ -104,7 +104,8 @@ int main(void) {
 
 	init_time();
 
-	//TODO: enter sleep mode after initializing and make microcontroller to wake up only for interrupts (RTC alarm)
+	//enter sleep mode after initializing and make microcontroller to wake up only for interrupts (RTC alarm)
+	SCB->SCR |= 2u;
 
 	while (1) {
 

@@ -3,7 +3,6 @@
 
 #include "stm32f4xx.h"
 
-
 #define GPIOA_CLOCK_EN 0x1u
 #define GPIOB_CLOCK_EN 0x2u
 #define GPIOC_CLOCK_EN 0x4u

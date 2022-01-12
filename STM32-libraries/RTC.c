@@ -37,13 +37,13 @@ static uint8_t bcd2bin(uint16_t bcd) {
 	return bin;
 }
 
-static void unlock_write_protection() {
+void unlock_write_protection() {
 	RTC->WPR = 0xCAu;
 	RTC->WPR = 0x53u;
 
 }
 
-static void enable_write_protection() {
+void enable_write_protection() {
 	RTC->WPR |= 0xFFu;
 
 }

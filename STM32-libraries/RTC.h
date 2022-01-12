@@ -65,5 +65,8 @@ date_time_type get_date_time();
 void set_alarm(date_time_type* time, alarm_mask_type* alarm_mask, alarm_type alarm);
 void disable_alarm(alarm_type alarm);
 
+void unlock_write_protection();
+void enable_write_protection();
+
 
 #endif /* INC_RTC_H_ */

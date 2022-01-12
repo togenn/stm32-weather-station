@@ -17,6 +17,7 @@ pin_type internal_led_pin;
 I2C_handle_type I2C_handle;
 
 date_time_type date_time;
+alarm_mask_type mask;
 
 
 #endif /* INC_MAIN_H_ */
