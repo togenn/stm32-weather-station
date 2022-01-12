@@ -1,13 +1,29 @@
 #include "NVIC_lib.h"
 #include "stm32f4xx.h"
 
+static void calculate_register_values(uint8_t IRQn, uint8_t *buf,
+		uint8_t bits_in_field) {
+
+	bits_in_field = 32 / bits_in_field;
+	uint8_t num = IRQn / bits_in_field;
+	uint8_t pos = IRQn % bits_in_field;
+
+	buf[0] = num;
+	buf[1] = pos;
+}
+
 static void calculate_ISER_values(uint8_t IRQn, uint8_t *buf) {
 
-	uint8_t ISER_num = IRQn / 32;
-	uint8_t ISER_pos = IRQn % 32;
+	calculate_register_values(IRQn, buf, 1);
+}
 
-	buf[0] = ISER_num;
-	buf[1] = ISER_pos;
+
+
+//priority must be between 0 and 15
+void set_priority(uint8_t IRQn, uint8_t priority) {
+
+	NVIC->IP[IRQn] = 0;
+	NVIC->IP[IRQn] |= priority << 4;
 
 }
 

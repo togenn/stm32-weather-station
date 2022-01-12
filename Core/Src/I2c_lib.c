@@ -67,67 +67,26 @@ void I2C_init(I2C_handle_type *handle) {
 	handle->peripheral->CR2 |= 7u << 8;
 }
 
+static void enable_peripheral(I2C_handle_type *handle) {
+	handle->peripheral->CR1 |= 1u;
+}
+
+static void disable_peripheral(I2C_handle_type *handle) {
+	handle->peripheral->CR1 &= ~1u;
+}
+
+static void generate_start_condition(I2C_handle_type *handle) {
+	handle->peripheral->CR1 |= 1u << 8;
+}
+
 static uint8_t start_communication(I2C_handle_type *handle) {
 	if (handle->status != I2C_STATUS_IDLE) {
 		return 1;
 	}
 
-	I2C_enable_IR(handle);
+	enable_peripheral(handle);
 
-	//enable the peripheral
-	handle->peripheral->CR1 |= 1u;
-
-	//generate a Start condition
-	handle->peripheral->CR1 |= 1u << 8;
-
-	return 0;
-}
-
-uint8_t I2C_transmit_data(I2C_handle_type *handle) {
-
-	if (start_communication(handle)) {
-		return 1;
-	}
-
-	handle->status = I2C_STATUS_TRANSMITTING;
-
-	return 0;
-}
-
-uint8_t I2C_transmit_data_and_wait(I2C_handle_type *handle) {
-
-	if (I2C_transmit_data(handle)) {
-		return 1;
-	}
-
-	while (handle->status != I2C_STATUS_IDLE)
-		;
-
-	return 0;
-
-}
-
-uint8_t I2C_receive_data(I2C_handle_type *handle) {
-
-	if (start_communication(handle)) {
-		return 1;
-	}
-
-	handle->status = I2C_STATUS_RECEIVING;
-	handle->peripheral->CR1 |= 1u << 10;
-
-	return 0;
-
-}
-
-uint8_t I2C_receive_data_and_wait(I2C_handle_type *handle) {
-
-	if (I2C_receive_data(handle)) {
-		return 1;
-	}
-
-	while (handle->status != I2C_STATUS_IDLE)
-		;
+	generate_start_condition(handle);
 
 	return 0;
 }
@@ -169,7 +128,7 @@ static void handle_transmitting(I2C_handle_type *handle) {
 			//generate stop condition
 			handle->peripheral->CR1 |= 1u << 9;
 
-			handle->peripheral->CR1 &= ~1u;
+			disable_peripheral(handle);
 			I2C_disable_IR(handle);
 			handle->status = I2C_STATUS_IDLE;
 
@@ -179,8 +138,98 @@ static void handle_transmitting(I2C_handle_type *handle) {
 
 		handle->peripheral->DR = *(handle->data++);
 
+	}
+}
+
+uint8_t I2C_transmit_data(I2C_handle_type *handle) {
+
+	if (start_communication(handle)) {
+		return 1;
+	}
+	I2C_enable_IR(handle);
+	handle->status = I2C_STATUS_TRANSMITTING;
+
+	return 0;
+}
+
+uint8_t I2C_transmit_data_polling(I2C_handle_type *handle) {
+
+	if (start_communication(handle)) {
+		return 1;
+	}
+
+	handle->status = I2C_STATUS_TRANSMITTING;
+
+	while (!(handle->peripheral->SR1 & 1u))
+		;
+	//start condition
+	handle_start_condition(handle);
+
+	while ((!(handle->peripheral->SR1 & (1u << 3)))
+			&& (!(handle->peripheral->SR1 & 2u)))
+		;
+
+	if (handle->addressing_mode == I2C_10_BIT_ADDRESSING) {
+		//header sent, send rest of the address
+		handle->peripheral->DR = handle->slave_address << 1;
+	}
+
+	while (!(handle->peripheral->SR1 & 2u))
+		;
+
+	//address sent
+	(void) handle->peripheral->SR2;
+
+	while (1) {
+
+		if (handle->peripheral->SR1 & (1u << 7)) {
+			//data register empty, write next frame to DR
+
+			if (handle->data_len-- == 0) {
+				//generate stop condition
+				handle->peripheral->CR1 |= 1u << 9;
+
+				disable_peripheral(handle);
+				I2C_disable_IR(handle);
+				handle->status = I2C_STATUS_IDLE;
+
+				return 0;
+
+			}
+
+			handle->peripheral->DR = *(handle->data++);
+		}
 
 	}
+
+	return 0;
+
+}
+
+uint8_t I2C_receive_data(I2C_handle_type *handle) {
+
+	if (start_communication(handle)) {
+		return 1;
+	}
+
+	I2C_enable_IR(handle);
+	handle->status = I2C_STATUS_RECEIVING;
+	handle->peripheral->CR1 |= 1u << 10;
+
+	return 0;
+
+}
+
+uint8_t I2C_receive_data_and_wait(I2C_handle_type *handle) {
+
+	if (I2C_receive_data(handle)) {
+		return 1;
+	}
+
+	while (handle->status != I2C_STATUS_IDLE)
+		;
+
+	return 0;
 }
 
 static void handle_receiving(I2C_handle_type *handle) {
@@ -215,9 +264,7 @@ static void handle_receiving(I2C_handle_type *handle) {
 			//generate stop condition and nack
 			handle->peripheral->CR1 &= ~(1u << 10);
 
-
 		}
-
 
 		(void) handle->peripheral->SR2;
 
@@ -233,7 +280,7 @@ static void handle_receiving(I2C_handle_type *handle) {
 			repeated_start = 0;
 
 			handle->status = I2C_STATUS_IDLE;
-			handle->peripheral->CR1 &= ~1u;
+			disable_peripheral(handle);
 			I2C_disable_IR(handle);
 
 		}

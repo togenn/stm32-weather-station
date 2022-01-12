@@ -42,9 +42,9 @@ void I2C1_ER_IRQHandler() {
 
 
 void format_date_time(char *buffer, date_time_type *date_time) {
-	char format[] = "%02d:%02d %02d/%02d/20%02d";
+	char format[] = "%02d:%02d %02d/%02d/20%d";
 	sprintf(buffer, format, (int) date_time->hours, (int) date_time->minutes,
-			(int) date_time->seconds, (int) date_time->date,
+			(int) date_time->date,
 			(int) date_time->month, (int) date_time->year);
 }
 
@@ -53,7 +53,9 @@ void RTC_Alarm_IRQHandler() {
 	date_time_type date_time = get_date_time();
 	char date_time_str[16];
 	format_date_time(date_time_str, &date_time);
-	LCD_write(&I2C_handle, date_time_str, 16, 1, 0);
+	LCD_write(&I2C_handle, date_time_str, 16, 0, 0);
+
+	dht22_get_data_and_wait();
 
 }
 

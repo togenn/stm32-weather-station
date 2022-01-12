@@ -14,7 +14,7 @@ static void read_bit(void) {
 
 	if (bits_read == 32) {
 
-		disable_EXTI(10);
+		disable_EXTI_GPIO(10);
 
 		dht22_data.temperature = temperature_tmp;
 		dht22_data.humidity = humidity_tmp;
@@ -82,6 +82,7 @@ void init_dht22() {
 	enable_IR(EXTI15_10_IRQn);
 
 }
+
 
 uint8_t dht22_get_data() {
 	if (dht_status == SLEEPING) {

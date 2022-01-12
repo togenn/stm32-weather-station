@@ -33,7 +33,7 @@ void I2C_pins_init(); //user definable
  * return 0 if peripheral is already busy, otherwise returns 1
  */
 uint8_t I2C_transmit_data(I2C_handle_type* handle);
-uint8_t I2C_transmit_data_and_wait(I2C_handle_type* handle);
+uint8_t I2C_transmit_data_polling(I2C_handle_type* handle);
 
 uint8_t I2C_receive_data(I2C_handle_type* handle);
 uint8_t I2C_receive_data_and_wait(I2C_handle_type* handle);

@@ -2,5 +2,5 @@ interrupts.c:15:6:SysTick_Handler	8	static
 interrupts.c:22:6:EXTI15_10_IRQHandler	8	static
 interrupts.c:29:6:I2C1_EV_IRQHandler	8	static
 interrupts.c:33:6:I2C1_ER_IRQHandler	16	static
-interrupts.c:44:6:format_date_time	80	static
+interrupts.c:44:6:format_date_time	72	static
 interrupts.c:51:6:RTC_Alarm_IRQHandler	48	static

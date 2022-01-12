@@ -10,6 +10,7 @@
 #include "lcd.h"
 #include "math.h"
 #include <stdio.h>
+#include "NVIC_lib.h"
 
 void int2string(uint16_t num, char *buffer) {
 
@@ -27,18 +28,20 @@ void format_dht22_values(char *buffer, uint16_t value) {
 	char decimal_str[1];
 	int2string(decimal, decimal_str);
 
-	buffer = strcat(strcat(integer_str, ","), decimal_str);
+	char comma[] = ",";
+	strncpy(buffer, strcat(strcat(integer_str, comma), decimal_str), 4);
+	buffer[4] = '\0';
 }
 
 void dht22_application_callback() {
 
-	char temp[4];
-	char humidity[4];
+	char temp[5];
+	char humidity[5];
 	format_dht22_values(temp, dht22_data.temperature);
 	format_dht22_values(humidity, dht22_data.humidity);
 
-	LCD_write(&I2C_handle, temp, 4, 0, 0);
-	LCD_write(&I2C_handle, humidity, 4, 0, 5);
+	LCD_write(&I2C_handle, temp, 4, 1, 0);
+	LCD_write(&I2C_handle, humidity, 4, 1, 5);
 
 }
 
@@ -81,53 +84,53 @@ void I2C_pins_init() {
 void init_time() {
 
 	memset(&date_time, 0, sizeof(date_time));
-	date_time.date = 6;
-	date_time.day = thursday;
-	date_time.hours = 9;
-	date_time.minutes = 8;
+	date_time.date = 11;
+	date_time.day = tuesday;
+	date_time.hours = 17;
+	date_time.minutes = 23;
 	date_time.month = 1;
 	date_time.seconds = 0;
 	date_time.time_format = format_24;
 	date_time.year = 22;
 
 	RTC_init(&date_time);
+	set_priority(RTC_Alarm_IRQn, 3);
 
 	date_time.seconds = 0;
 	alarm_mask_type mask;
 	memset(&mask, 0, sizeof(mask));
-	mask.seconds = mask_enable;
+
 
 	set_alarm(&date_time, &mask, alarm_A);
 }
 
-void debug_pins(I2C_handle_type *handle) {
-	uint8_t data = 1;
-	handle->data = &data;
-	handle->data_len = 1;
 
-	for (uint32_t i = 0; i < 8; i++) {
-
-		I2C_transmit_data_and_wait(handle);
-		data = pow(2, i + 1);
-		handle->data = &data;
-		handle->data_len = 1;
-
-	}
-}
 
 int main(void) {
 	uart_init(USART2, UART_8BIT, UART_1_STOP_BITS, 115200);
+
+	init_systick();
+
+	dht22.gpio = GPIOA;
+	dht22.pin_num = 10;
+	init_dht22();
+	set_priority(SysTick_IRQn, 2);
 
 	I2C_handle.peripheral = I2C1;
 	I2C_handle.addressing_mode = I2C_7_BIT_ADDRESSING;
 	I2C_handle.slave_address = 0x27;
 	I2C_init(&I2C_handle);
+	set_priority(I2C1_EV_IRQn, 1);
+	set_priority(I2C1_ER_IRQn, 0);
 
 	init_timer(TIM2, 2);
 
 	LCD_init(&I2C_handle);
 
+	init_time();
+
 	while (1) {
+
 
 	}
 }

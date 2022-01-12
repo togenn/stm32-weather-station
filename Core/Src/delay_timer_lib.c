@@ -56,6 +56,7 @@ static uint32_t get_timer_clock(TIM_TypeDef *timer) {
 void init_timer(TIM_TypeDef *timer, uint16_t prescaler) {
 	enable_timer_clock(timer);
 	timer->PSC = prescaler - 1;
+	timer_clock = get_timer_clock(timer);
 
 }
 
@@ -68,18 +69,29 @@ uint8_t delay(uint32_t ms, TIM_TypeDef *timer) {
 		max = 65535;
 	}
 
-	uint32_t timer_clock = get_timer_clock(timer);
 	uint8_t status = ms < (max / (timer_clock / 1000)) ? OK : OF_ERROR;
 
 	if (status == OK) {
+		timer->CNT = 0;
 		timer->ARR = ms * (timer_clock / 1000) - 1;
 		timer->CR1 |= 1u;
-		while (!(timer->SR & 1u));
+		while (!(timer->SR & 1u))
+			;
 		timer->SR &= ~1u;
 	}
 
-
 	return status;
+
+}
+
+void delay_micros(uint32_t micros, TIM_TypeDef *timer) {
+
+	timer->CNT = 0;
+	timer->ARR = micros * (timer_clock / 1000000) - 1;
+	timer->CR1 |= 1u;
+	while (!(timer->SR & 1u))
+		;
+	timer->SR &= ~1u;
 
 }
 
