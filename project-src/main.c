@@ -12,11 +12,6 @@
 #include <stdio.h>
 #include "NVIC_lib.h"
 
-void int2string(uint16_t num, char *buffer) {
-
-	sprintf(buffer, "%d", num);
-
-}
 
 
 void dht22_application_callback() {
