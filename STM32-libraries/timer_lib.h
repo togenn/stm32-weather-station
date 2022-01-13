@@ -19,4 +19,7 @@ void init_timer(TIM_TypeDef* timer, uint16_t prescaler);
 uint8_t delay(uint32_t ms, TIM_TypeDef *timer);
 void delay_micros(uint32_t micros, TIM_TypeDef *timer);
 
+uint8_t timer_IT(uint32_t ms, TIM_TypeDef *timer);
+void timer_micros_IT(uint32_t micros, TIM_TypeDef * timer);
+
 #endif /* INC_DELAY_TIMER_LIB_H_ */

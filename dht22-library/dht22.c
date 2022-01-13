@@ -1,8 +1,8 @@
 #include "dht22.h"
-#include <systick_IR_timer_lib.h>
+#include "systick_IR_timer_lib.h"
 #include "EXTI_lib.h"
 #include "NVIC_lib.h"
-
+#include "timer_lib.h"
 
 uint16_t temperature_tmp;
 uint16_t humidity_tmp;
@@ -14,7 +14,7 @@ static void read_bit(void) {
 
 	if (bits_read == 32) {
 
-		disable_EXTI_GPIO(10);
+		disable_EXTI_GPIO(dht22.pin_num);
 
 		dht22_data.temperature = temperature_tmp;
 		dht22_data.humidity = humidity_tmp;
@@ -22,6 +22,10 @@ static void read_bit(void) {
 		temperature_tmp = 0;
 		humidity_tmp = 0;
 		bits_read = -1;
+
+		//disable timeout timer
+		TIM5->DIER &= ~1u;
+		TIM5->CR1 &= ~1u;
 
 		dht_status = SLEEPING;
 		dht22_application_callback();
@@ -45,7 +49,6 @@ void dht22_handle_data_pin_IT() {
 
 }
 
-
 void dht22_handle_delay_IT(void) {
 
 	if (dht_status == INITIALIZING) {
@@ -57,12 +60,11 @@ void dht22_handle_delay_IT(void) {
 
 		IR_timer_micros(185);
 
-
 	} else if (dht_status == INITIALIZING_2) {
 		dht_status = SENDING_DATA;
 
 		//enable interrupt for data pin on rising edge
-		enable_EXTI_GPIO(10, EXTI_GPIOA, EXTI_RE);
+		enable_EXTI_GPIO(dht22.pin_num, dht22.gpio--, EXTI_RE);
 
 	} else if (dht_status == SENDING_DATA) {
 		read_bit();
@@ -83,11 +85,13 @@ void init_dht22() {
 
 }
 
-
 uint8_t dht22_get_data() {
 	if (dht_status == SLEEPING) {
-		dht_status = INITIALIZING;
 
+		timer_IT(100, TIM5);
+
+		dht_status = INITIALIZING;
+		disable_EXTI_GPIO(dht22.pin_num);
 		dht22.mode = OUTPUT;
 		change_mode(&dht22);
 		write_pin(&dht22, LOW);
@@ -101,6 +105,7 @@ uint8_t dht22_get_data() {
 
 void dht22_get_data_and_wait() {
 	dht22_get_data();
-	while(dht_status != SLEEPING);
+	while (dht_status != SLEEPING)
+		;
 }
 

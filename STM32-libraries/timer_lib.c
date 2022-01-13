@@ -4,7 +4,7 @@
  *  Created on: Dec 5, 2021
  *      Author: toni
  */
-#include "delay_timer_lib.h"
+#include <timer_lib.h>
 #include "clocks_lib.h"
 
 static void enable_timer_clock(TIM_TypeDef *timer) {
@@ -53,14 +53,21 @@ static uint32_t get_timer_clock(TIM_TypeDef *timer) {
 	return get_timer_base_clock(timer) / (prescaler + 1);
 }
 
-void init_timer(TIM_TypeDef *timer, uint16_t prescaler) {
-	enable_timer_clock(timer);
-	timer->PSC = prescaler - 1;
-	timer_clock = get_timer_clock(timer);
-
+static void start_timer(uint32_t value, TIM_TypeDef *timer) {
+	timer->CNT = 0;
+	timer->ARR = value - 1;
+	timer->CR1 |= 1u;
 }
 
-uint8_t delay(uint32_t ms, TIM_TypeDef *timer) {
+static uint32_t get_ms_value(uint32_t ms) {
+	return ms * (timer_clock / 1000) - 1;
+}
+
+static uint32_t get_micros_value(uint32_t micros) {
+	return micros * (timer_clock / 1000000) - 1;
+}
+
+static uint8_t check_for_overflow(uint32_t ms, TIM_TypeDef* timer) {
 	uint32_t max = 0;
 
 	if (timer == TIM2 || timer == TIM5) {
@@ -69,12 +76,25 @@ uint8_t delay(uint32_t ms, TIM_TypeDef *timer) {
 		max = 65535;
 	}
 
-	uint8_t status = ms < (max / (timer_clock / 1000)) ? OK : OF_ERROR;
+	return ms < (max / (timer_clock / 1000)) ? OK : OF_ERROR;
+
+
+}
+
+void init_timer(TIM_TypeDef *timer, uint16_t prescaler) {
+	enable_timer_clock(timer);
+	timer->PSC = prescaler - 1;
+	timer_clock = get_timer_clock(timer);
+
+}
+
+uint8_t delay(uint32_t ms, TIM_TypeDef *timer) {
+
+
+	uint8_t status = check_for_overflow(ms, timer);
 
 	if (status == OK) {
-		timer->CNT = 0;
-		timer->ARR = ms * (timer_clock / 1000) - 1;
-		timer->CR1 |= 1u;
+		start_timer(get_ms_value(ms), timer);
 		while (!(timer->SR & 1u))
 			;
 		timer->SR &= ~1u;
@@ -86,12 +106,29 @@ uint8_t delay(uint32_t ms, TIM_TypeDef *timer) {
 
 void delay_micros(uint32_t micros, TIM_TypeDef *timer) {
 
-	timer->CNT = 0;
-	timer->ARR = micros * (timer_clock / 1000000) - 1;
-	timer->CR1 |= 1u;
+	start_timer(get_micros_value(micros), timer);
+
 	while (!(timer->SR & 1u))
 		;
 	timer->SR &= ~1u;
 
+}
+
+uint8_t timer_IT(uint32_t ms, TIM_TypeDef *timer) {
+
+	uint8_t status = check_for_overflow(ms, timer);
+
+	if (status == OK) {
+		timer->DIER |= 1u;
+		start_timer(get_ms_value(ms), timer);
+	}
+
+	return status;
+
+}
+
+void timer_micros_IT(uint32_t micros, TIM_TypeDef *timer) {
+	timer->DIER |= 1u;
+	start_timer(get_micros_value(micros), timer);
 }
 

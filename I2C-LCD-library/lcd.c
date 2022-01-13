@@ -1,5 +1,5 @@
 #include "lcd.h"
-#include "delay_timer_lib.h"
+#include "timer_lib.h"
 
 //1st bit - RS
 //2nd bit - RW

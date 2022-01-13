@@ -29,6 +29,16 @@ void EXTI15_10_IRQHandler() {
 
 }
 
+void TIM5_IRQHandler() {
+	//reading data from dht22 failed
+	dht22_data.temperature = 0xFFFF;
+	dht22_data.humidity = 0xFFFF;
+	dht_status = SLEEPING;
+
+	TIM5->DIER &= ~1u;
+	TIM5->CR1 &= ~1u;
+}
+
 void I2C1_EV_IRQHandler() {
 	I2C_handle_EV(&I2C_handle);
 }

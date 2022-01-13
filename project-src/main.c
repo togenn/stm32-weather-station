@@ -3,7 +3,7 @@
 #include "UART_lib.h"
 #include "dht22.h"
 #include "systick_IR_timer_lib.h"
-#include "delay_timer_lib.h"
+#include "timer_lib.h"
 #include "main.h"
 #include "string.h"
 #include "RTC.h"
@@ -99,6 +99,7 @@ int main(void) {
 	set_priority(I2C1_ER_IRQn, 0);
 
 	init_timer(TIM2, 2);
+	init_timer(TIM5, 2);
 
 	LCD_init(&I2C_handle);
 

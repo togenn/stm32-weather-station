@@ -16,15 +16,49 @@ static void calculate_SYSCFG_values(uint8_t pin_num, uint8_t *buf) {
 
 }
 
-void enable_EXTI_GPIO(uint8_t pin_num, uint8_t gpio, uint8_t edge) {
+static uint8_t get_gpio_number(GPIO_TypeDef *gpio) {
+
+	uint8_t gpio_num;
+
+	if (gpio == GPIOA) {
+
+		gpio_num = EXTI_GPIOA;
+
+	} else if (gpio == GPIOB) {
+
+		gpio_num = EXTI_GPIOB;
+
+	} else if (gpio == GPIOC) {
+
+		gpio_num = EXTI_GPIOC;
+
+	} else if (gpio == GPIOD) {
+
+		gpio_num = EXTI_GPIOD;
+
+	} else if (gpio == GPIOE) {
+
+		gpio_num = EXTI_GPIOE;
+
+	} else if (gpio == GPIOH) {
+
+		gpio_num = EXTI_GPIOH;
+	}
+
+	return gpio_num;
+}
+
+void enable_EXTI_GPIO(uint8_t pin_num, GPIO_TypeDef* gpio, uint8_t edge) {
 
 	RCC->APB2ENR |= 1u << 14;
+
+	uint8_t gpio_num = get_gpio_number(gpio);
 
 	//enable correct port from SYSCFG register for EXTI
 	uint8_t SYSCFG_values[2];
 	calculate_SYSCFG_values(pin_num, SYSCFG_values);
 
-	SYSCFG->EXTICR[SYSCFG_values[0]] |= (gpio << SYSCFG_values[1]);
+	SYSCFG->EXTICR[SYSCFG_values[0]] |= (gpio_num << SYSCFG_values[1]);
 
 	enable_EXTI(pin_num, edge);
 
