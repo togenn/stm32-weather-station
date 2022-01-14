@@ -74,8 +74,7 @@ void init_time() {
 
 	memset(&mask, 0, sizeof(mask));
 
-
-	set_alarm(&date_time, &mask, alarm_A);
+		set_alarm(&date_time, &mask, alarm_A);
 }
 
 
@@ -101,12 +100,14 @@ int main(void) {
 	init_timer(TIM2, 2);
 	init_timer(TIM5, 2);
 
+
 	LCD_init(&I2C_handle);
 
 	init_time();
 
 	//enter sleep mode after initializing and make microcontroller to wake up only for interrupts (RTC alarm)
-	SCB->SCR |= 2u;
+	//SCB->SCR |= 2u;
+
 
 	while (1) {
 

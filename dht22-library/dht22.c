@@ -4,10 +4,6 @@
 #include "NVIC_lib.h"
 #include "timer_lib.h"
 
-uint16_t temperature_tmp;
-uint16_t humidity_tmp;
-
-uint8_t bits_read;
 
 static void read_bit(void) {
 	pin_state value = read_pin(&dht22);
@@ -64,7 +60,7 @@ void dht22_handle_delay_IT(void) {
 		dht_status = SENDING_DATA;
 
 		//enable interrupt for data pin on rising edge
-		enable_EXTI_GPIO(dht22.pin_num, dht22.gpio--, EXTI_RE);
+		enable_EXTI_GPIO(dht22.pin_num, dht22.gpio, EXTI_RE);
 
 	} else if (dht_status == SENDING_DATA) {
 		read_bit();
@@ -88,6 +84,7 @@ void init_dht22() {
 uint8_t dht22_get_data() {
 	if (dht_status == SLEEPING) {
 
+		//timeout timer
 		timer_IT(100, TIM5);
 
 		dht_status = INITIALIZING;

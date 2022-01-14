@@ -8,6 +8,10 @@
 #define INITIALIZING_2 2u
 #define SLEEPING 3u
 
+uint16_t temperature_tmp;
+uint16_t humidity_tmp;
+
+uint8_t bits_read;
 
 struct dht22_data {
 	uint16_t temperature;

@@ -6,6 +6,7 @@
  */
 #include <timer_lib.h>
 #include "clocks_lib.h"
+#include "NVIC_lib.h"
 
 static void enable_timer_clock(TIM_TypeDef *timer) {
 	if (timer == TIM1) {
@@ -25,6 +26,28 @@ static void enable_timer_clock(TIM_TypeDef *timer) {
 	} else if (timer == TIM11) {
 		RCC->APB2ENR |= 1u << 18;
 	}
+}
+
+
+static void enable_timer_interrupt(TIM_TypeDef *timer) {
+	if (timer == TIM1) {
+		enable_IR(TIM1_UP_TIM10_IRQn);
+	} else if (timer == TIM2) {
+		enable_IR(TIM2_IRQn);
+	} else if (timer == TIM3) {
+		enable_IR(TIM3_IRQn);
+	} else if (timer == TIM4) {
+		enable_IR(TIM4_IRQn);
+	} else if (timer == TIM5) {
+		enable_IR(TIM5_IRQn);
+	} else if (timer == TIM9) {
+		enable_IR(TIM1_BRK_TIM9_IRQn);
+	} else if (timer == TIM10) {
+		enable_IR(TIM1_UP_TIM10_IRQn);
+	} else if (timer == TIM11) {
+		enable_IR(TIM1_TRG_COM_TIM11_IRQn);
+	}
+
 }
 
 static uint32_t get_timer_base_clock(TIM_TypeDef *timer) {
@@ -83,6 +106,7 @@ static uint8_t check_for_overflow(uint32_t ms, TIM_TypeDef* timer) {
 
 void init_timer(TIM_TypeDef *timer, uint16_t prescaler) {
 	enable_timer_clock(timer);
+	enable_timer_interrupt(timer);
 	timer->PSC = prescaler - 1;
 	timer_clock = get_timer_clock(timer);
 

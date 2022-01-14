@@ -12,6 +12,7 @@
 #include "lcd.h"
 #include "RTC.h"
 #include "string_formatting.h"
+#include "EXTI_lib.h"
 #include <string.h>
 
 
@@ -33,10 +34,17 @@ void TIM5_IRQHandler() {
 	//reading data from dht22 failed
 	dht22_data.temperature = 0xFFFF;
 	dht22_data.humidity = 0xFFFF;
-	dht_status = SLEEPING;
 
+	disable_EXTI_GPIO(dht22.pin_num);
+
+	temperature_tmp = 0;
+	humidity_tmp = 0;
+	bits_read = 0;
+
+	dht_status = SLEEPING;
 	TIM5->DIER &= ~1u;
 	TIM5->CR1 &= ~1u;
+	TIM5->SR = 0;
 }
 
 void I2C1_EV_IRQHandler() {
@@ -50,10 +58,9 @@ void I2C1_ER_IRQHandler() {
 
 	uart_transmit_data(USART2, (uint8_t*) number, 2);
 
-	while(1);
+	while (1)
+		;
 }
-
-
 
 void EXTI17_RTC_Alarm_IRQHandler() {
 
@@ -79,5 +86,4 @@ void EXTI17_RTC_Alarm_IRQHandler() {
 	set_alarm(&date_time, &mask, alarm_A);
 
 }
-
 
